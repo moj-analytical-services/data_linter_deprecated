@@ -1,17 +1,25 @@
 import unittest
-
 import os
+
+from parameterized import parameterized
+
 from data_linter.lint import Linter, DataframeNotSet, TableMetaNotSet
 
 class BasicDataTest(unittest.TestCase):
 
-    def test_pass_response(self):
+
+    @parameterized.expand(['csv', 'jsonl'])
+    def test_pass_response(self, file_type):
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        data_path = os.path.join(current_dir, 'data/pass_data.csv')
         meta_path = os.path.join(current_dir, 'data/meta.json')
+        data_path = os.path.join(current_dir, f"data/pass_data.{file_type}")
 
         dl = Linter()
-        dl.read_df_from_csv(data_path)
+
+        # pass get and exec read_df_from_jsonl or read_df_from_csv depending on input
+        getattr(dl, f"read_df_from_{file_type}")(data_path)
+        dl.read_table_meta(meta_path)
+        
         dl.read_table_meta(meta_path)
 
         resp = dl.test_columns()
@@ -36,13 +44,16 @@ class BasicDataTest(unittest.TestCase):
         self.assertDictEqual(expected['col2'], resp['col2'])
         self.assertDictEqual(expected['col3'], resp['col3'])
 
-    def test_fail_response(self):
+    @parameterized.expand(['csv', 'jsonl'])
+    def test_fail_response(self, file_type):
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        data_path = os.path.join(current_dir, 'data/fail_data.csv')
         meta_path = os.path.join(current_dir, 'data/meta.json')
-
+        data_path = os.path.join(current_dir, f"data/fail_data.{file_type}")
+        
         dl = Linter()
-        dl.read_df_from_csv(data_path)
+
+        # pass get and exec read_df_from_jsonl or read_df_from_csv depending on input
+        getattr(dl, f"read_df_from_{file_type}")(data_path)
         dl.read_table_meta(meta_path)
 
         resp = dl.test_columns()
@@ -67,6 +78,7 @@ class BasicDataTest(unittest.TestCase):
         self.assertDictEqual(expected['col2'], resp['col2'])
         self.assertDictEqual(expected['col3'], resp['col3'])
 
+class TestErrors(unittest.TestCase):
     def test_errors(self):
         dl = Linter()
         self.assertRaises(DataframeNotSet, dl.get_nullable_values, "col1")

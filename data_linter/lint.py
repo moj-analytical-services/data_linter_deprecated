@@ -170,4 +170,4 @@ class Linter:
         passed to pd.read_csv function. Note low_memory is set to False and dtype is set to
         object.
         """
-        self.df = pd.read_json(path, dtype=object, lines=True, numpy=True, *args, **kwargs)
+        self.df = pd.read_json(path, dtype=object, lines=True, *args, **kwargs)
