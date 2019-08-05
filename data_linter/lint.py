@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+import great_expectations as ge
 
 from etl_manager.meta import read_table_json, TableMeta
 
