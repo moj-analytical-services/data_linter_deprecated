@@ -2,8 +2,6 @@ import pandas as pd
 import numpy as np
 import great_expectations as ge
 
-from etl_manager.meta import read_table_json, TableMeta
-
 class Linter:
     def __init__(self, df, meta):
         """
@@ -22,7 +20,7 @@ class Linter:
         if not isinstance(df, pd.DataFrame):
             raise TypeError("df must be a pandas dataframe object")
         else:
-            self._df = df
+            self._df = ge.from_pandas(df)
     
     @property
     def meta(self):
@@ -35,7 +33,19 @@ class Linter:
         else:
             self._meta = meta
     
-    def meta_col(self, col_name):
+
+    def get_meta_col(self, col_name):
         if col_name not in self.meta.column_names:
             raise ValueError(f"col_name: {col_name} not found in meta data columns.")
         return [c for c in self.meta.columns if c['name'] == col_name][0]
+
+    @property
+    def meta_columns(self):
+        return self.meta['columns']
+
+    @property
+    def meta_column_names(self):
+        return [c['name'] for c in self.meta_columns]
+    
+    def check_column_name_and_order(self):
+        self.df.expect_table_columns_to_match_ordered_list(self.meta_column_names)
