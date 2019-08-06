@@ -14,6 +14,63 @@ import pandas as pd
 import numpy as np
 
 
+def _pd_df_datatypes_match_metadata_data_types(df, meta_cols):
+    """
+    Do the data types in the pandas dataframe match those in meta_cols
+    """
+
+    expected_dtypes = _pd_dtype_dict_from_metadata(meta_cols)
+
+    actual_numpy_types = dict(df.dtypes)
+
+    for dt in actual_numpy_types:
+        actual_numpy_types[dt] = actual_numpy_types[dt].type
+
+    return actual_numpy_types == expected_dtypes
+
+
+def _pd_dtype_dict_from_metadata(meta_cols):
+    """
+    Convert the table metadata to the dtype dict that needs to be
+    passed to the dtype argument of pd.read_csv
+    """
+
+    with pkg_resources.resource_stream(__name__, "data/data_type_conversion.csv") as io:
+        type_conversion = pd.read_csv(io)
+
+    type_conversion = type_conversion.set_index("metadata")
+
+    type_conversion_dict = type_conversion.to_dict(orient="index")
+
+    dtype = {}
+
+    for c in meta_cols:
+        colname = c["name"]
+        coltype = c["type"]
+        coltype = type_conversion_dict[coltype]['pandas']
+        dtype[colname] = np.typeDict[coltype]
+
+    return dtype
+
+
+def _list_of_date_columns_from_metadata(table_metadata):
+    """
+    Get list of columns to pass to the pandas.to_csv date_parse argument from table metadata
+    """
+
+    parse_dates = []
+
+    for c in table_metadata:
+        colname = c["name"]
+        coltype = c["type"]
+
+        if coltype in ["date", "datetime"]:
+            parse_dates.append(colname)
+
+    return parse_dates
+
+
+
 def _get_np_datatype_from_metadata(col_name, meta_cols):
     """
     Lookup the datatype from the metadata, and our conversion table
@@ -37,7 +94,7 @@ def _get_np_datatype_from_metadata(col_name, meta_cols):
         return None
 
 
-def _pd_date_parse_list_from_metadatadata(meta_cols):
+def _list_of_date_columns_from_metadata(meta_cols):
     """
     Get list of columns to pass to the pandas.to_csv date_parse argument from table metadata
     """
@@ -65,7 +122,7 @@ def impose_metadata_types_on_pd_df(df, meta_cols, errors='ignore'):
 
     df_cols_set = set(df.columns)
     metadata_date_cols_set = set(
-        _pd_date_parse_list_from_metadatadata(meta_cols))
+        _list_of_date_columns_from_metadata(meta_cols))
     metadata_cols_set = set([c["name"] for c in meta_cols])
 
     # Cols that may need conversion minus the date cols
