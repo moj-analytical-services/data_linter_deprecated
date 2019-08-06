@@ -8,7 +8,7 @@ jobs:
       - run:
           name: setup env
           command: |  # use pipenv to install dependencies
-            sudo pip install requirements.txt
+            sudo pip install -r requirements.txt
       - run:
           name: Running tests
           command: |
