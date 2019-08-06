@@ -139,10 +139,7 @@ class Linter:
         test_name = "check_nulls"
 
         for col in self.meta_cols:
-            try:
-                nullable = col["nullable"]
-            except KeyError:
-                nullable = True
+            nullable = col.get("nullable", True)
 
             nulls_result = self.df.expect_column_values_to_not_be_null(
                 col["name"],
