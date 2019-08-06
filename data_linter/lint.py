@@ -152,6 +152,7 @@ class Linter:
             )
 
             # Set success property dependent on nullable from metadata
-            if nullable then nulls_result["success"] = True 
+            if nullable:
+                nulls_result["success"] = True 
 
             self.log[col["name"]][test_name] = nulls_result
