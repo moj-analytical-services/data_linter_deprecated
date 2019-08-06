@@ -1,15 +1,15 @@
 version: 2
 jobs:
   build:
+    working_directory: ~/data_linter
     docker:
       - image: circleci/python:3.7
     steps:
       - checkout
       - run:
+          name: setup env
           command: |  # use pipenv to install dependencies
-            sudo pip install pipenv
-            pipenv install -r requirements.txt
-            pipenv shell
+            sudo pip install requirements.txt
       - run:
           name: Running tests
           command: |
