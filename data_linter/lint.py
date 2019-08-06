@@ -83,3 +83,4 @@ class Linter:
                                                       catch_exceptions=True)
             
             self.log[col["name"]][test_name] = enum_result
+
