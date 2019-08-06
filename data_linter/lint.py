@@ -16,28 +16,17 @@ class Linter:
         if not isinstance(meta_cols, list):
             raise TypeError("meta_cols must be a list of objects")
 
-        self._df = ge.from_pandas(df)
-        self._meta_cols = meta_cols
+        self.df_ge = ge.from_pandas(df)
+        self.meta_cols = meta_cols
 
-        self._log = {}
+        self.log = {}
         for c in meta_cols:
-            self._log[c["name"]] = {}
-
-    @property
-    def df(self):
-        return self._df
-
-    @property
-    def meta_cols(self):
-        return self._meta_cols
-
-    @property
-    def log(self):
-        return self._log
+            self.log[c["name"]] = {}
 
     def get_meta_col(self, col_name):
         if col_name not in self.meta_colnames:
-            raise ValueError(f"col_name: {col_name} not found in meta data columns.")
+            raise ValueError(
+                f"col_name: {col_name} not found in meta data columns.")
         return [c for c in self.meta_cols if c["name"] == col_name][0]
 
     @property
@@ -56,14 +45,14 @@ class Linter:
 
         # Create lookup for df cols
         df_cols = {}
-        for i, c in enumerate(self.df.columns):
+        for i, c in enumerate(self.df_ge.columns):
             df_cols[c] = i
 
         #  Test meta cols
         for i, c in enumerate(self.meta_colnames):
             self.log[c][fn] = self._get_template_result()
             self.log[c][fn]["result"]["expected_pos"] = i
-            
+
             if c in df_cols:
                 self.log[c][fn]["result"]["column_exists"] = True
                 self.log[c][fn]["result"]["actual_pos"] = df_cols[c]
@@ -78,10 +67,9 @@ class Linter:
                 and self.log[c][fn]["result"]["order_match"]
             )
 
-
     def check_enums(self):
         """
-        Test to if values in column are all in 
+        Test to if values in column are all in
         enums as specified in metadata
         """
         print("Running enum test")
@@ -94,7 +82,7 @@ class Linter:
                 self.log[col["name"]][test_name] = self._get_template_result()
                 continue
 
-            enum_result = self.df.expect_column_values_to_be_in_set(
+            enum_result = self.df_ge.expect_column_values_to_be_in_set(
                 col["name"],
                 enum_list,
                 result_format="COMPLETE",
@@ -111,44 +99,20 @@ class Linter:
         """
         print("Running pattern test")
         test_name = "check_pattern"
-        
+
         for col in self.meta_cols:
             try:
                 pattern = col["pattern"]
             except KeyError:
                 self.log[col["name"]][test_name] = self._get_template_result()
                 continue
-            
-            pattern_result = self.df.expect_column_values_to_match_regex(
+
+            pattern_result = self.df_ge.expect_column_values_to_match_regex(
                 col["name"],
                 pattern,
-                result_format="COMPLETE", 
-                include_config=False, 
-                catch_exceptions=True
-            )
-            
-            self.log[col["name"]][test_name] = pattern_result
-        
-
-    def check_nulls(self):
-        """
-        Test column for null values 
-        consistent with nullable property in metadata
-        """
-        test_name = "check_nulls"
-
-        for col in self.meta_cols:
-            nullable = col.get("nullable", True)
-
-            nulls_result = self.df.expect_column_values_to_not_be_null(
-                col["name"],
                 result_format="COMPLETE",
                 include_config=False,
-                catch_exceptions=True,
+                catch_exceptions=True
             )
 
-            # Set success property dependent on nullable from metadata
-            if nullable:
-                nulls_result["success"] = True 
-
-            self.log[col["name"]][test_name] = nulls_result
+            self.log[col["name"]][test_name] = pattern_result
