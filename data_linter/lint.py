@@ -70,9 +70,8 @@ class Linter:
         for col in self.meta_cols:
             try:
                 enum_list = col["enum"]
-            except KeyError:
-                
-                enum_result = {}
+            except KeyError      
+                self.log[col["name"]][test_name] = self._get_template_result()
                 continue
             
             enum_result = \
