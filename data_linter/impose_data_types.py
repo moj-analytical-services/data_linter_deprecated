@@ -12,6 +12,7 @@ strings rather than let pandas attempt to guess types
 import pkg_resources
 import pandas as pd
 import numpy as np
+import json
 
 
 def _pd_df_datatypes_match_metadata_data_types(df, meta_cols):
@@ -35,32 +36,28 @@ def _pd_dtype_dict_from_metadata(meta_cols):
     passed to the dtype argument of pd.read_csv
     """
 
-    with pkg_resources.resource_stream(__name__, "data/data_type_conversion.csv") as io:
-        type_conversion = pd.read_csv(io)
-
-    type_conversion = type_conversion.set_index("metadata")
-
-    type_conversion_dict = type_conversion.to_dict(orient="index")
+    with pkg_resources.resource_stream(__name__, "data/type_conversion.json") as io:
+        type_conversion_dict = json.load(io)
 
     dtype = {}
 
     for c in meta_cols:
         colname = c["name"]
         coltype = c["type"]
-        coltype = type_conversion_dict[coltype]['pandas']
+        coltype = type_conversion_dict[coltype]['pd_datatype']
         dtype[colname] = np.typeDict[coltype]
 
     return dtype
 
 
-def _list_of_date_columns_from_metadata(table_metadata):
+def _list_of_date_columns_from_metadata(meta_cols):
     """
     Get list of columns to pass to the pandas.to_csv date_parse argument from table metadata
     """
 
     parse_dates = []
 
-    for c in table_metadata:
+    for c in meta_cols:
         colname = c["name"]
         coltype = c["type"]
 
@@ -76,11 +73,11 @@ def _get_np_datatype_from_metadata(col_name, meta_cols):
     Lookup the datatype from the metadata, and our conversion table
     """
 
-    with pkg_resources.resource_stream(__name__, "data/data_type_conversion.csv") as io:
-        type_conversion = pd.read_csv(io)
-    type_conversion = type_conversion.set_index("metadata")
-    type_conversion_dict = type_conversion.to_dict(orient="index")
+    with pkg_resources.resource_stream(__name__, "data/type_conversion.json") as io:
+        type_conversion_dict = json.load(io)
 
+
+    # Find the specific col_name in the meta_cols array
     col = None
     for c in meta_cols:
         if c["name"] == col_name:
@@ -88,7 +85,7 @@ def _get_np_datatype_from_metadata(col_name, meta_cols):
 
     if col:
         agnostic_type = col["type"]
-        numpy_type = type_conversion_dict[agnostic_type]["pandas"]
+        numpy_type = type_conversion_dict[agnostic_type]["pd_datatype"]
         return np.typeDict[numpy_type]
     else:
         return None
@@ -115,10 +112,13 @@ def impose_metadata_types_on_pd_df(df, meta_cols, errors='ignore'):
     """
     Try to impose correct data type on all columns in metadata.
     Doesn't modify columns not in metadata
+    Makes a copy of the dataframe (does not modify in place)
+
 
     Allows you to pass arguments through to the astype e.g. to errors = 'ignore'
     https://pandas.pydata.org/pandas-docs/stable/generated/pandas.Series.astype.html
     """
+    df = df.copy()
 
     df_cols_set = set(df.columns)
     metadata_date_cols_set = set(

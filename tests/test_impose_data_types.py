@@ -28,7 +28,7 @@ class ConformanceTestOfValidData(unittest.TestCase):
 
     def test_metadata_correctly_imposed_on_valid_data(self):
 
-        df = pd.read_csv(td_path("test_csv_data_valid.csv"), dtype="object")
+        df = pd.read_csv(td_path("test_csv_data_valid.csv"), dtype="object", low_memory=True)
 
         meta_cols = read_json_from_path(
             td_path("test_table_metadata_valid.json"))
@@ -62,7 +62,7 @@ class ConformanceTestOfValidData(unittest.TestCase):
     def test_metadata_impose_does_not_work_on_invalid_data(self):
 
         # What happens if we read in data that does NOT conform to the metadata
-        df = pd.read_csv(td_path("test_csv_data_invalid_data.csv"))
+        df = pd.read_csv(td_path("test_csv_data_invalid_data.csv"), dtype = "object", low_memory = True)
 
         meta_cols = read_json_from_path(
             td_path("test_table_metadata_valid.json"))
