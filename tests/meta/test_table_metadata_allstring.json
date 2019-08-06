@@ -1,0 +1,42 @@
+[
+  {
+    "name": "myint",
+    "type": "character",
+    "description": "myint"
+  },
+  {
+    "name": "myfloat",
+    "type": "character",
+    "description": "myfloat"
+  },
+  {
+    "name": "mychar",
+    "type": "character",
+    "description": "mychar"
+  },
+  {
+    "name": "mydate",
+    "type": "character",
+    "description": "mydate"
+  },
+  {
+    "name": "mydatetime",
+    "type": "character",
+    "description": "mydatetime"
+  },
+  {
+    "name": "myboolean",
+    "type": "character",
+    "description": "myboolean"
+  },
+  {
+    "name": "mydouble",
+    "type": "character",
+    "description": "mydouble"
+  },
+  {
+    "name": "mylong",
+    "type": "character",
+    "description": "mylong"
+  }
+]
