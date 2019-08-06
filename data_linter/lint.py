@@ -61,7 +61,7 @@ class Linter:
 
         #  Test meta cols
         for i, c in enumerate(self.meta_colnames):
-            self.log[c][fn] = self._get_template_result
+            self.log[c][fn] = self._get_template_result()
             self.log[c][fn]["result"]["expected_pos"] = i
 
             if c in df_cols:
