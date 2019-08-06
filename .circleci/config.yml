@@ -9,6 +9,7 @@ jobs:
           command: |  # use pipenv to install dependencies
             sudo pip install pipenv
             pipenv install -r requirements.txt
+            pipenv shell
       - run:
           name: Running tests
           command: |
