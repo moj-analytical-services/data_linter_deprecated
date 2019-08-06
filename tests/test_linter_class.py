@@ -51,7 +51,7 @@ class TestLinterMethods(unittest.TestCase):
         L = Linter(df, meta)
         L.check_enums()
         self.assertDictEqual(L.log, result)
-        
+ 
     @parameterized.expand(
         [
             (
@@ -78,4 +78,23 @@ class TestLinterMethods(unittest.TestCase):
         L = Linter(df, meta)
         L.check_column_exists_and_order()
 
+        self.assertDictEqual(L.log, result)
+
+    @parameterized.expand(
+        [
+            (
+                "test_csv_data_invalid_regex",
+                "meta/test_table_metadata_regex.json",
+                "expected_results/test_result_invalid_regex.json"
+            )
+        ]
+    )
+    def test_check_regex(self, d, m, r):
+        
+        df = get_test_csv(d)
+        meta = read_json(m)
+        result = read_json(r)[0]
+
+        L = Linter(df, meta)
+        L.check_pattern()
         self.assertDictEqual(L.log, result)
