@@ -1,6 +1,7 @@
 import unittest
 import os
 import json
+import pandas as pd
 
 from parameterized import parameterized
 
@@ -8,19 +9,45 @@ from data_linter.lint import Linter
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
+
+
 def get_test_csv(filename):
-    path = os.path.join(current_dir, "data", filename)
+    path = os.path.join(current_dir, "data", filename + ".csv")
     return pd.read_csv(path, dtype=object, low_memory=True)
 
-def get_df_from_jsonl(filename):
-    path = os.path.join(current_dir, "data", filename)
+
+def get_test_jsonl(filename):
+    path = os.path.join(current_dir, "data", filename + ".jsonl")
     return pd.read_json(path, lines=True)
 
-def get_json(filename):
-    path = os.path.join(current_dir, "data", filename)
-    with open(path) as f:
-        o = json.loads(f)
-    return o
 
+def read_json(rel_path):
+    path = os.path.join(current_dir, rel_path)
+    with open(path) as f:
+        o = json.load(f)
+    return o
 class TestLinterMethods(unittest.TestCase):
-    pass
+    @parameterized.expand(
+        [
+            (
+                "test_csv_data_invalid_enums",
+                "meta/test_table_metadata_enums.json",
+                "expected_results/test_result_invalid_enums.json"
+            ),
+            (
+                "test_csv_data_valid_enums",
+                "meta/test_table_metadata_enums.json",
+                "expected_results/test_result_valid_enums.json"
+            )
+        ]
+    )
+    def test_check_enums(self, d, m, r):
+        
+        df = get_test_csv(d)
+        meta = read_json(m)
+        result = read_json(r)[0]
+
+        L = Linter(df, meta)
+        L.check_enums()
+        self.assertDictEqual(L.log, result)
+
