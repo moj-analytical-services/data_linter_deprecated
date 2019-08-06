@@ -1,0 +1,69 @@
+[
+    {
+        "myint": {
+            "check_enums": {
+                "success": null,
+                "result": {}
+            }
+        },
+        "myfloat": {
+            "check_enums": {
+                "success": null,
+                "result": {}
+            }
+        },
+        "mychar": {
+            "check_enums": {
+                "success": true,
+                "result": {
+                    "element_count": 3,
+                    "missing_count": 0,
+                    "missing_percent": 0.0,
+                    "unexpected_count": 0,
+                    "unexpected_percent": 0.0,
+                    "unexpected_percent_nonmissing": 0.0,
+                    "partial_unexpected_list": [],
+                    "partial_unexpected_index_list": [],
+                    "partial_unexpected_counts": [],
+                    "unexpected_list": [],
+                    "unexpected_index_list": []
+                },
+                "exception_info": {
+                    "raised_exception": false,
+                    "exception_message": null,
+                    "exception_traceback": null
+                }
+            }
+        },
+        "mydate": {
+            "check_enums": {
+                "success": null,
+                "result": {}
+            }
+        },
+        "mydatetime": {
+            "check_enums": {
+                "success": null,
+                "result": {}
+            }
+        },
+        "myboolean": {
+            "check_enums": {
+                "success": null,
+                "result": {}
+            }
+        },
+        "mydouble": {
+            "check_enums": {
+                "success": null,
+                "result": {}
+            }
+        },
+        "mylong": {
+            "check_enums": {
+                "success": null,
+                "result": {}
+            }
+        }
+    }
+]

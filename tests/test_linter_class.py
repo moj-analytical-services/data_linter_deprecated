@@ -26,8 +26,32 @@ def read_json(rel_path):
         o = json.load(f)
     return o
 
-
+  
 class TestLinterMethods(unittest.TestCase):
+    @parameterized.expand(
+        [
+            (
+                "test_csv_data_invalid_enums",
+                "meta/test_table_metadata_enums.json",
+                "expected_results/test_result_invalid_enums.json"
+            ),
+            (
+                "test_csv_data_valid_enums",
+                "meta/test_table_metadata_enums.json",
+                "expected_results/test_result_valid_enums.json"
+            )
+        ]
+    )
+    def test_check_enums(self, d, m, r):
+        
+        df = get_test_csv(d)
+        meta = read_json(m)
+        result = read_json(r)[0]
+
+        L = Linter(df, meta)
+        L.check_enums()
+        self.assertDictEqual(L.log, result)
+        
     @parameterized.expand(
         [
             (
