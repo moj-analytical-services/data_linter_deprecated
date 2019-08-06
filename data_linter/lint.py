@@ -48,12 +48,35 @@ class Linter:
         return {"success": None, "result": {}}
 
     def check_column_exists_and_order(self):
-        for c_m in self.df.columns:
-            self.log[c_m]["check_column_exists_and_order"] = self._get_template_result
+        """
+        Checks if columns in meta data exist in dataframe and also checks if dataframe order is correct.
+        writes results of tests to log property
+        """
+        fn = "check_column_exists_and_order"
 
-        self.log[c_m]["check_column_exists_and_order"] = {}
-        for c_m, c_df in zip(self.meta_colnames, self.df.columns):
-            self.log[c_m]["check_column_exists_and_order"] = self._get_template_result
+        # Create lookup for df cols
+        df_cols = {}
+        for i, c in enumerate(self.df.columns):
+            df_cols[c] = i
+
+        #  Test meta cols
+        for i, c in enumerate(self.meta_colnames):
+            self.log[c][fn] = self._get_template_result()
+            self.log[c][fn]["result"]["expected_pos"] = i
+            
+            if c in df_cols:
+                self.log[c][fn]["result"]["column_exists"] = True
+                self.log[c][fn]["result"]["actual_pos"] = df_cols[c]
+                self.log[c][fn]["result"]["order_match"] = i == df_cols[c]
+            else:
+                self.log[c][fn]["result"]["column_exists"] = False
+                self.log[c][fn]["result"]["actual_pos"] = None
+                self.log[c][fn]["result"]["order_match"] = False
+
+            self.log[c][fn]["success"] = (
+                self.log[c][fn]["result"]["column_exists"]
+                and self.log[c][fn]["result"]["order_match"]
+            )
 
         # Apply to log not return
         # log["col1"]["check_column_name_and_order"] = BLAH
