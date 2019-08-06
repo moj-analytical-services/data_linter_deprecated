@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import great_expectations as ge
 
+
 class Linter:
     def __init__(self, df, meta_cols):
         """
@@ -20,7 +21,7 @@ class Linter:
 
         self._log = {}
         for c in meta_cols:
-            self._log[c['name']] = {}
+            self._log[c["name"]] = {}
 
     @property
     def df(self):
@@ -37,15 +38,15 @@ class Linter:
     def get_meta_col(self, col_name):
         if col_name not in self.meta_colnames:
             raise ValueError(f"col_name: {col_name} not found in meta data columns.")
-        return [c for c in self.meta_cols if c['name'] == col_name][0]
+        return [c for c in self.meta_cols if c["name"] == col_name][0]
 
     @property
     def meta_colnames(self):
-        return [c['name'] for c in self.meta_cols]
+        return [c["name"] for c in self.meta_cols]
 
     def _get_template_result(self):
-        return {'success': None, "result": {}}
-    
+        return {"success": None, "result": {}}
+
     def check_column_exists_and_order(self):
         for c_m in self.df.columns:
             self.log[c_m]["check_column_exists_and_order"] = self._get_template_result
@@ -54,10 +55,11 @@ class Linter:
         for c_m, c_df in zip(self.meta_colnames, self.df.columns):
             self.log[c_m]["check_column_exists_and_order"] = self._get_template_result
 
-
         # Apply to log not return
         # log["col1"]["check_column_name_and_order"] = BLAH
-        return self.df.expect_table_columns_to_match_ordered_list(self.meta_colnames, result_format="COMPLETE", catch_exceptions=True)
+        return self.df.expect_table_columns_to_match_ordered_list(
+            self.meta_colnames, result_format="COMPLETE", catch_exceptions=True
+        )
 
     def check_enums(self):
         """
@@ -66,20 +68,21 @@ class Linter:
         """
         print("Running enum test")
         test_name = "check_enums"
-        
+
         for col in self.meta_cols:
             try:
                 enum_list = col["enum"]
-            except KeyError:    
+            except KeyError:
                 self.log[col["name"]][test_name] = self._get_template_result()
                 continue
-            
-            enum_result = \
-            self.df.expect_column_values_to_be_in_set(col["name"],
-                                                      enum_list,
-                                                      result_format="COMPLETE", 
-                                                      include_config=False, 
-                                                      catch_exceptions=True)
-            
+
+            enum_result = self.df.expect_column_values_to_be_in_set(
+                col["name"],
+                enum_list,
+                result_format="COMPLETE",
+                include_config=False,
+                catch_exceptions=True,
+            )
+
             self.log[col["name"]][test_name] = enum_result
 
