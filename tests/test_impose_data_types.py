@@ -70,3 +70,20 @@ class ConformanceTestOfValidData(unittest.TestCase):
 
         self.assertFalse(
             _pd_df_datatypes_match_metadata_data_types(df, meta_cols))
+
+    def test_metadata_impose_works_on_non_strings(self):
+
+        #What happens if we read ints and it expects strings?
+
+        df = pd.read_parquet(os.path.join(THIS_DIR, "data", "test_parquet_data_valid.parquet"))
+
+        meta_cols = read_json_from_path(
+            os.path.join(THIS_DIR, "meta", "test_table_metadata_allstring.json"))
+
+        self.assertFalse(
+            _pd_df_datatypes_match_metadata_data_types(df, meta_cols))
+
+        df = impose_metadata_types_on_pd_df(df, meta_cols)
+
+        self.assertTrue(
+            _pd_df_datatypes_match_metadata_data_types(df, meta_cols))
