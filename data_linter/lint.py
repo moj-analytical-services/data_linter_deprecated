@@ -104,8 +104,6 @@ class Linter:
 
             self.log[col["name"]][test_name] = enum_result
 
-    
-
     def check_pattern(self):
         """
         Test to if values in column all fit within
@@ -130,3 +128,27 @@ class Linter:
             )
             
             self.log[col["name"]][test_name] = pattern_result
+        
+
+    def check_nulls(self):
+        """
+        Test column for null values 
+        consistent with nullable property in metadata
+        """
+        test_name = "check_nulls"
+
+        for col in self.meta_cols:
+            nullable = col.get("nullable", True)
+
+            nulls_result = self.df.expect_column_values_to_not_be_null(
+                col["name"],
+                result_format="COMPLETE",
+                include_config=False,
+                catch_exceptions=True,
+            )
+
+            # Set success property dependent on nullable from metadata
+            if nullable:
+                nulls_result["success"] = True 
+
+            self.log[col["name"]][test_name] = nulls_result
