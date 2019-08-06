@@ -135,7 +135,6 @@ class Linter:
         Test column for null values 
         consistent with nullable property in metadata
         """
-        print("Running nullable test")
         test_name = "check_nulls"
 
         for col in self.meta_cols:
