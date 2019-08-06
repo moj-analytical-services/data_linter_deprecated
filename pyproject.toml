@@ -18,7 +18,7 @@ repository = "https://github.com/moj-analytical-services/data_linter"
 homepage = "https://github.com/moj-analytical-services/data_linter"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.6"
 great-expectations = "0.7.*"
 pandas = "0.25.*"
 
