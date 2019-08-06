@@ -63,7 +63,7 @@ class Linter:
         for i, c in enumerate(self.meta_colnames):
             self.log[c][fn] = self._get_template_result()
             self.log[c][fn]["result"]["expected_pos"] = i
-
+            
             if c in df_cols:
                 self.log[c][fn]["result"]["column_exists"] = True
                 self.log[c][fn]["result"]["actual_pos"] = df_cols[c]
@@ -77,3 +77,30 @@ class Linter:
                 self.log[c][fn]["result"]["column_exists"]
                 and self.log[c][fn]["result"]["order_match"]
             )
+
+
+    def check_enums(self):
+        """
+        Test to if values in column are all in 
+        enums as specified in metadata
+        """
+        print("Running enum test")
+        test_name = "check_enums"
+
+        for col in self.meta_cols:
+            try:
+                enum_list = col["enum"]
+            except KeyError:
+                self.log[col["name"]][test_name] = self._get_template_result()
+                continue
+
+            enum_result = self.df.expect_column_values_to_be_in_set(
+                col["name"],
+                enum_list,
+                result_format="COMPLETE",
+                include_config=False,
+                catch_exceptions=True,
+            )
+
+            self.log[col["name"]][test_name] = enum_result
+
