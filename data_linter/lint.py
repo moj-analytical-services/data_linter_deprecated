@@ -20,7 +20,7 @@ class Linter:
 
         self._log = {}
         for c in meta_cols:
-            self._log[c['name']] = None
+            self._log[c['name']] = {}
 
     @property
     def df(self):
@@ -43,7 +43,18 @@ class Linter:
     def meta_colnames(self):
         return [c['name'] for c in self.meta_cols]
 
-    def check_column_name_and_order(self):
+    def _get_template_result(self):
+        return {'success': None, "result": {}}
+    
+    def check_column_exists_and_order(self):
+        for c_m in self.df.columns:
+            self.log[c_m]["check_column_exists_and_order"] = self._get_template_result
+
+        self.log[c_m]["check_column_exists_and_order"] = {}
+        for c_m, c_df in zip(self.meta_colnames, self.df.columns):
+            self.log[c_m]["check_column_exists_and_order"] = self._get_template_result
+
+
         # Apply to log not return
         # log["col1"]["check_column_name_and_order"] = BLAH
         return self.df.expect_table_columns_to_match_ordered_list(self.meta_colnames, result_format="COMPLETE", catch_exceptions=True)
