@@ -78,11 +78,6 @@ class Linter:
                 and self.log[c][fn]["result"]["order_match"]
             )
 
-        # Apply to log not return
-        # log["col1"]["check_column_name_and_order"] = BLAH
-        return self.df.expect_table_columns_to_match_ordered_list(
-            self.meta_colnames, result_format="COMPLETE", catch_exceptions=True
-        )
 
     def check_enums(self):
         """
