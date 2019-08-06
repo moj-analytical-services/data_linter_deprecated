@@ -140,3 +140,12 @@ class Linter:
                 nulls_result["success"] = True
 
             self.log[col["name"]][test_name] = nulls_result
+
+    def check_all(self):
+        """
+        Run each of the checks in turn
+        """
+        self.check_column_exists_and_order()
+        self.check_nulls()
+        self.check_pattern()
+        self.check_enums()
