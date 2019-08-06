@@ -64,13 +64,10 @@ class Linter:
         Test to if values in column are all in 
         enums as specified in metadata
         """
-         
         print("Running enum test")
-
         test_name = "check_enums"
         
         for col in self.meta_cols:
-
             try:
                 enum_list = col["enum"]
             except KeyError:
@@ -86,3 +83,4 @@ class Linter:
                                                       catch_exceptions=True)
             
             self.log[col["name"]][test_name] = enum_result
+
