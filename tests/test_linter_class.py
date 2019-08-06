@@ -9,13 +9,16 @@ from data_linter.lint import Linter
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
+
 def get_test_csv(filename):
     path = os.path.join(current_dir, "data", filename + ".csv")
     return pd.read_csv(path, dtype=object, low_memory=True)
 
+
 def get_test_jsonl(filename):
     path = os.path.join(current_dir, "data", filename + ".jsonl")
     return pd.read_json(path, lines=True)
+
 
 def read_json(rel_path):
     path = os.path.join(current_dir, rel_path)
@@ -23,25 +26,27 @@ def read_json(rel_path):
         o = json.load(f)
     return o
 
-class TestLinterMethods(unittest.TestCase):
 
-    @parameterized.expand([
-        (
-            "test_csv_data_valid",
-            "meta/test_table_metadata_valid.json",
-            "expected_results/test_check_column_exists_and_order/data_valid.json"
-        ),
-        (
-            "test_csv_data_missing_col",
-            "meta/test_table_metadata_valid.json",
-            "expected_results/test_check_column_exists_and_order/missing_col.json"
-        ),
-        (
-            "test_csv_data_valid_wrong_order",
-            "meta/test_table_metadata_valid.json",
-            "expected_results/test_check_column_exists_and_order/wrong_order.json"
-        ),
-    ])
+class TestLinterMethods(unittest.TestCase):
+    @parameterized.expand(
+        [
+            (
+                "test_csv_data_valid",
+                "meta/test_table_metadata_valid.json",
+                "expected_results/test_check_column_exists_and_order/data_valid.json",
+            ),
+            (
+                "test_csv_data_missing_col",
+                "meta/test_table_metadata_valid.json",
+                "expected_results/test_check_column_exists_and_order/missing_col.json",
+            ),
+            (
+                "test_csv_data_valid_wrong_order",
+                "meta/test_table_metadata_valid.json",
+                "expected_results/test_check_column_exists_and_order/wrong_order.json",
+            ),
+        ]
+    )
     def test_check_column_exists_and_order(self, d, m, r):
         df = get_test_csv(d)
         meta = read_json(m)
