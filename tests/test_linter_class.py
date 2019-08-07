@@ -2,6 +2,7 @@ import unittest
 import os
 import json
 import pandas as pd
+from jsonschema.exceptions import ValidationError
 
 from parameterized import parameterized
 
@@ -98,3 +99,25 @@ class TestLinterMethods(unittest.TestCase):
         L = Linter(df, meta)
         L.check_pattern()
         self.assertDictEqual(L.log, result)
+
+    def test_validate_meta_data(self):
+        meta = read_json("meta/test_meta_cols_valid.json")
+
+        #Data is irrelevant but cannot instantiate linter without it
+        df = get_test_csv("test_csv_data_valid")
+
+        # Test no error is raised
+        L = Linter(df, meta)
+
+
+        # Test invalid metadata raises an error
+        meta = read_json("meta/test_invalid_meta_cols_missing_name.json")
+
+        with self.assertRaises(ValidationError):
+            L = Linter(df, meta)
+
+        # Test invalid metadata raises an error
+        meta = read_json("meta/test_invalid_meta_columns_key_mispelt.json")
+
+        with self.assertRaises(ValidationError):
+            L = Linter(df, meta)

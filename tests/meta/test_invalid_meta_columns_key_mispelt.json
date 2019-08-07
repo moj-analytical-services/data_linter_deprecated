@@ -1,0 +1,9 @@
+{
+    "column": [
+        {
+            "name": "myint",
+            "type": "int",
+            "description": "myint"
+        }
+    ]
+}

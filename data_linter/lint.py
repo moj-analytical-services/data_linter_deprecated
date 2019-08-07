@@ -1,6 +1,9 @@
-import pandas as pd
-import numpy as np
 import great_expectations as ge
+import json
+import jsonschema
+import numpy as np
+import pandas as pd
+import pkg_resources
 
 
 class Linter:
@@ -11,6 +14,9 @@ class Linter:
         """
         if not isinstance(df, pd.DataFrame):
             raise TypeError("df must be a pandas dataframe object")
+
+        self.meta_data = meta_data
+        self.validate_meta_data()
 
         self.meta_cols = meta_data["columns"]
         # Placeholer for proper schema check
@@ -141,3 +147,11 @@ class Linter:
                 nulls_result["success"] = True
 
             self.log[col["name"]][test_name] = nulls_result
+
+    def validate_meta_data(self):
+        """
+        Check that the metadata the user has provided is valid
+        """
+        with pkg_resources.resource_stream(__name__, "data/metadata_jsonschema.json") as io:
+            schema = json.load(io)
+        jsonschema.validate(self.meta_data, schema)
