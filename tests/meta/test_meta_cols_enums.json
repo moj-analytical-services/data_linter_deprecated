@@ -12,8 +12,13 @@
         },
         {
             "name": "mychar",
-            "type": "float",
-            "description": "mychar"
+            "type": "character",
+            "description": "mychar",
+            "enum": [
+                "a",
+                "b",
+                "c"
+            ]
         },
         {
             "name": "mydate",

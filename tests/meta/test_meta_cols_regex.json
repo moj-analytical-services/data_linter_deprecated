@@ -12,7 +12,7 @@
         },
         {
             "name": "mychar",
-            "type": "float",
+            "type": "character",
             "description": "mychar"
         },
         {
@@ -39,6 +39,12 @@
             "name": "mylong",
             "type": "long",
             "description": "mylong"
+        },
+        {
+            "name": "mypattern",
+            "type": "character",
+            "description": "mypattern",
+            "pattern": "[a-zA-Z]{4}/\\d{3}"
         }
     ]
 }
