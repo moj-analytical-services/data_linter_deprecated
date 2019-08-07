@@ -4,6 +4,8 @@ import jsonschema
 import numpy as np
 import pandas as pd
 import pkg_resources
+from data_linter.impose_data_types import impose_metadata_types_on_pd_df
+from data_linter.validation_log import ValidationLog
 
 
 class Linter:
@@ -23,12 +25,17 @@ class Linter:
         if not isinstance(self.meta_cols, list):
             raise TypeError("meta_cols must be a list of objects")
 
+        # This never fails, but the resultant types are not guaranteed to be correct
+        df = impose_metadata_types_on_pd_df(df, meta_data)
+
         self.df_ge = ge.from_pandas(df)
 
+        self.vlog = ValidationLog(self)
 
         self.log = {}
         for c in self.meta_cols:
             self.log[c["name"]] = {}
+
 
     def get_meta_col(self, col_name):
         if col_name not in self.meta_colnames:
@@ -155,3 +162,13 @@ class Linter:
         with pkg_resources.resource_stream(__name__, "data/metadata_jsonschema.json") as io:
             schema = json.load(io)
         jsonschema.validate(self.meta_data, schema)
+
+    def check_all(self):
+        """
+        Perform all validations, ouputting to linter.log
+        """
+
+        self.check_column_exists_and_order()
+        self.check_nulls()
+        self.check_pattern()
+        self.check_enums()
