@@ -1,0 +1,4 @@
+great-expectations>=0.7.5
+pandas>=0.25
+parameterized>=0.7
+pyarrow>=0.14
