@@ -36,8 +36,6 @@ class ConformanceTestOfValidData(unittest.TestCase):
         # We expect that, after impose_metadata_types_on_pd_df is run, the datatypes conform to the metadata
         df = impose_metadata_types_on_pd_df(df, meta_data)
 
-        # import pdb; pdb.set_trace()
-
         self.assertTrue(
             _pd_df_datatypes_match_metadata_data_types(df, meta_cols))
 
