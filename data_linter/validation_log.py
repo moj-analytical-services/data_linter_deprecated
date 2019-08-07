@@ -54,7 +54,7 @@ class LogEntry:
     def exception_info(self):
         return self._exception_info
 
-    def append_result(self, key, value):
+    def set_result_key(self, key, value):
         if not self._result:
             self._result = {}
         self._result[key] = value
@@ -62,7 +62,7 @@ class LogEntry:
     def set_success_status(self, success):
         self._success = success
 
-    def append_exception_info(self, key, value):
+    def set_exception_info_key(self, key, value):
         if not self._exception_info:
             self._exception_info = {}
 
@@ -74,9 +74,9 @@ class LogEntry:
             return "Status not yet determined"
 
         if self._success:
-            status = "Success"
+            return "Success"
         else:
-            status = "Failure"
+            return "Failure"
 
     def __repr__(self):
         return f"data_linter.validation_log.LogEntry: This log entry checks {self.validation_description} for column {self.col_name}.  Current status: {self._status()}"
@@ -98,6 +98,19 @@ class ColumnLogEntries:
             self.entries[validation_description] = LogEntry(
                 self.col_name, validation_description)
         return self.entries[validation_description]
+
+    def create_logentry_from_ge_result(self, validation_description, ge_output):
+        le = self.get_or_create_logentry(validation_description)
+        le.set_success_status(ge_output["success"])
+
+        for key, value in ge_output["result"].items():
+            le.set_result_key(key, value)
+
+        if "exception_info" in ge_output:
+            for key, value in ge_output["exception_info"].items():
+                le.set_exception_info_key(key, value)
+
+
 
     def __repr__(self):
         repr = ""

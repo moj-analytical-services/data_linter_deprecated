@@ -56,29 +56,31 @@ class Linter:
         """
         fn = "check_column_exists_and_order"
 
-        # Create lookup for df cols
+        # Create lookup for df cols vs column position
         df_cols = {}
         for i, c in enumerate(self.df_ge.columns):
             df_cols[c] = i
 
         #  Test meta cols
-        for i, c in enumerate(self.meta_colnames):
-            self.log[c][fn] = self._get_template_result()
-            self.log[c][fn]["result"]["expected_pos"] = i
+        for pos, c in enumerate(self.meta_colnames):
+
+            col_logentries = self.vlog.get_log_entries_for_column(c)
+
+            le = col_logentries.get_or_create_logentry(fn)
+            le.set_result_key("expected_pos",  pos)
 
             if c in df_cols:
-                self.log[c][fn]["result"]["column_exists"] = True
-                self.log[c][fn]["result"]["actual_pos"] = df_cols[c]
-                self.log[c][fn]["result"]["order_match"] = i == df_cols[c]
+                le.set_result_key("column_exists", True)
+                le.set_result_key("actual_pos", df_cols[c])
+                le.set_result_key("order_match", pos == df_cols[c])
             else:
-                self.log[c][fn]["result"]["column_exists"] = False
-                self.log[c][fn]["result"]["actual_pos"] = None
-                self.log[c][fn]["result"]["order_match"] = False
+                le.set_result_key("column_exists", False)
+                le.set_result_key("actual_pos", None)
+                le.set_result_key("order_match", False)
 
-            self.log[c][fn]["success"] = (
-                self.log[c][fn]["result"]["column_exists"]
-                and self.log[c][fn]["result"]["order_match"]
-            )
+            is_successful = le.result["column_exists"] and le.result["order_match"]
+
+            le.set_success_status(is_successful)
 
 
     def check_enums(self):
@@ -104,7 +106,9 @@ class Linter:
                 catch_exceptions=True,
             )
 
-            self.log[col["name"]][test_name] = enum_result
+            col_logentries = self.vlog.get_log_entries_for_column(col["name"])
+            col_logentries.create_logentry_from_ge_result(
+                test_name, enum_result)
 
     def check_pattern(self):
         """
