@@ -11,11 +11,6 @@
             "description": "myfloat"
         },
         {
-            "name": "mychar",
-            "type": "float",
-            "description": "mychar"
-        },
-        {
             "name": "mydate",
             "type": "date",
             "description": "mydate"
