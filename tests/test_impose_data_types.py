@@ -25,14 +25,18 @@ class ConformanceTestOfValidData(unittest.TestCase):
 
         df = pd.read_csv(os.path.join(THIS_DIR, "data", "test_csv_data_valid.csv"), dtype="object", low_memory=True)
 
-        meta_cols = read_json_from_path(
+        meta_data = read_json_from_path(
             os.path.join(THIS_DIR, "meta", "test_meta_cols_valid.json"))
+
+        meta_cols = meta_data["columns"]
 
         self.assertFalse(
             _pd_df_datatypes_match_metadata_data_types(df, meta_cols))
 
         # We expect that, after impose_metadata_types_on_pd_df is run, the datatypes conform to the metadata
-        df = impose_metadata_types_on_pd_df(df, meta_cols)
+        df = impose_metadata_types_on_pd_df(df, meta_data)
+
+        # import pdb; pdb.set_trace()
 
         self.assertTrue(
             _pd_df_datatypes_match_metadata_data_types(df, meta_cols))
@@ -42,14 +46,16 @@ class ConformanceTestOfValidData(unittest.TestCase):
         # What happens if we read in an already typed database
         df = pd.read_parquet(os.path.join(THIS_DIR, "data", "test_parquet_data_valid.parquet"))
 
-        meta_cols = read_json_from_path(
+        meta_data = read_json_from_path(
             os.path.join(THIS_DIR, "meta", "test_meta_cols_valid.json"))
+
+        meta_cols = meta_data["columns"]
 
         self.assertTrue(
             _pd_df_datatypes_match_metadata_data_types(df, meta_cols))
 
         # We expect that, after impose_metadata_types_on_pd_df is run, the datatypes conform to the metadata
-        df = impose_metadata_types_on_pd_df(df, meta_cols)
+        df = impose_metadata_types_on_pd_df(df, meta_data)
 
         self.assertTrue(
             _pd_df_datatypes_match_metadata_data_types(df, meta_cols))
@@ -59,14 +65,16 @@ class ConformanceTestOfValidData(unittest.TestCase):
         # What happens if we read in data that does NOT conform to the metadata
         df = pd.read_csv(os.path.join(THIS_DIR, "data", "test_csv_data_invalid_data.csv"), dtype = "object", low_memory = True)
 
-        meta_cols = read_json_from_path(
+        meta_data = read_json_from_path(
             os.path.join(THIS_DIR, "meta", "test_meta_cols_valid.json"))
+
+        meta_cols = meta_data["columns"]
 
         self.assertFalse(
             _pd_df_datatypes_match_metadata_data_types(df, meta_cols))
 
         # We expect that, after impose_metadata_types_on_pd_df is run, the datatypes do NOT conform to the metadata
-        df = impose_metadata_types_on_pd_df(df, meta_cols)
+        df = impose_metadata_types_on_pd_df(df, meta_data)
 
         self.assertFalse(
             _pd_df_datatypes_match_metadata_data_types(df, meta_cols))
@@ -77,13 +85,15 @@ class ConformanceTestOfValidData(unittest.TestCase):
 
         df = pd.read_parquet(os.path.join(THIS_DIR, "data", "test_parquet_data_valid.parquet"))
 
-        meta_cols = read_json_from_path(
+        meta_data = read_json_from_path(
             os.path.join(THIS_DIR, "meta", "test_meta_cols_allstring.json"))
+
+        meta_cols = meta_data["columns"]
 
         self.assertFalse(
             _pd_df_datatypes_match_metadata_data_types(df, meta_cols))
 
-        df = impose_metadata_types_on_pd_df(df, meta_cols)
+        df = impose_metadata_types_on_pd_df(df, meta_data)
 
         self.assertTrue(
             _pd_df_datatypes_match_metadata_data_types(df, meta_cols))

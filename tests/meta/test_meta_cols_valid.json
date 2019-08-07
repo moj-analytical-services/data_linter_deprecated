@@ -12,7 +12,7 @@
         },
         {
             "name": "mychar",
-            "type": "float",
+            "type": "character",
             "description": "mychar"
         },
         {

@@ -108,7 +108,7 @@ def _list_of_date_columns_from_metadata(meta_cols):
     return parse_dates
 
 
-def impose_metadata_types_on_pd_df(df, meta_cols, errors='ignore'):
+def impose_metadata_types_on_pd_df(df, meta_data, errors='ignore'):
     """
     Try to impose correct data type on all columns in metadata.
     Doesn't modify columns not in metadata
@@ -119,6 +119,8 @@ def impose_metadata_types_on_pd_df(df, meta_cols, errors='ignore'):
     https://pandas.pydata.org/pandas-docs/stable/generated/pandas.Series.astype.html
     """
     df = df.copy()
+
+    meta_cols = meta_data["columns"]
 
     df_cols_set = set(df.columns)
     metadata_date_cols_set = set(

@@ -4,7 +4,7 @@ import great_expectations as ge
 
 
 class Linter:
-    def __init__(self, df, meta_cols):
+    def __init__(self, df, meta_data):
         """
         Takes a pandas dataframe and a table meta data object and checks
         the values in the dataframe against the meta data.
@@ -12,15 +12,16 @@ class Linter:
         if not isinstance(df, pd.DataFrame):
             raise TypeError("df must be a pandas dataframe object")
 
+        self.meta_cols = meta_data["columns"]
         # Placeholer for proper schema check
-        if not isinstance(meta_cols, list):
+        if not isinstance(self.meta_cols, list):
             raise TypeError("meta_cols must be a list of objects")
 
         self.df_ge = ge.from_pandas(df)
-        self.meta_cols = meta_cols
+
 
         self.log = {}
-        for c in meta_cols:
+        for c in self.meta_cols:
             self.log[c["name"]] = {}
 
     def get_meta_col(self, col_name):

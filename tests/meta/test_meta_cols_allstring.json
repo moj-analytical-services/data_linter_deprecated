@@ -2,42 +2,42 @@
     "columns": [
         {
             "name": "myint",
-            "type": "int",
+            "type": "character",
             "description": "myint"
         },
         {
             "name": "myfloat",
-            "type": "float",
+            "type": "character",
             "description": "myfloat"
         },
         {
             "name": "mychar",
-            "type": "float",
+            "type": "character",
             "description": "mychar"
         },
         {
             "name": "mydate",
-            "type": "date",
+            "type": "character",
             "description": "mydate"
         },
         {
             "name": "mydatetime",
-            "type": "datetime",
+            "type": "character",
             "description": "mydatetime"
         },
         {
             "name": "myboolean",
-            "type": "boolean",
+            "type": "character",
             "description": "myboolean"
         },
         {
             "name": "mydouble",
-            "type": "double",
+            "type": "character",
             "description": "mydouble"
         },
         {
             "name": "mylong",
-            "type": "long",
+            "type": "character",
             "description": "mylong"
         }
     ]
