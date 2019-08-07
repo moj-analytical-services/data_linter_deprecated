@@ -31,6 +31,6 @@ def read_json_from_path(path):
 meta = read_json_from_path("tests/meta/test_meta_cols_valid.json")
 df = pd.read_parquet("tests/data/test_parquet_data_valid.parquet")
 l = Linter(df, meta)
-l.test_all()
-print(l.log())
+l.check_all()
+print(l.log)
 ```
