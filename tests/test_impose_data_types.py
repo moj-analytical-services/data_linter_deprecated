@@ -26,7 +26,7 @@ class ConformanceTestOfValidData(unittest.TestCase):
         df = pd.read_csv(os.path.join(THIS_DIR, "data", "test_csv_data_valid.csv"), dtype="object", low_memory=True)
 
         meta_cols = read_json_from_path(
-            os.path.join(THIS_DIR, "meta", "test_table_metadata_valid.json"))
+            os.path.join(THIS_DIR, "meta", "test_meta_cols_valid.json"))
 
         self.assertFalse(
             _pd_df_datatypes_match_metadata_data_types(df, meta_cols))
@@ -43,7 +43,7 @@ class ConformanceTestOfValidData(unittest.TestCase):
         df = pd.read_parquet(os.path.join(THIS_DIR, "data", "test_parquet_data_valid.parquet"))
 
         meta_cols = read_json_from_path(
-            os.path.join(THIS_DIR, "meta", "test_table_metadata_valid.json"))
+            os.path.join(THIS_DIR, "meta", "test_meta_cols_valid.json"))
 
         self.assertTrue(
             _pd_df_datatypes_match_metadata_data_types(df, meta_cols))
@@ -60,7 +60,7 @@ class ConformanceTestOfValidData(unittest.TestCase):
         df = pd.read_csv(os.path.join(THIS_DIR, "data", "test_csv_data_invalid_data.csv"), dtype = "object", low_memory = True)
 
         meta_cols = read_json_from_path(
-            os.path.join(THIS_DIR, "meta", "test_table_metadata_valid.json"))
+            os.path.join(THIS_DIR, "meta", "test_meta_cols_valid.json"))
 
         self.assertFalse(
             _pd_df_datatypes_match_metadata_data_types(df, meta_cols))
@@ -78,7 +78,7 @@ class ConformanceTestOfValidData(unittest.TestCase):
         df = pd.read_parquet(os.path.join(THIS_DIR, "data", "test_parquet_data_valid.parquet"))
 
         meta_cols = read_json_from_path(
-            os.path.join(THIS_DIR, "meta", "test_table_metadata_allstring.json"))
+            os.path.join(THIS_DIR, "meta", "test_meta_cols_allstring.json"))
 
         self.assertFalse(
             _pd_df_datatypes_match_metadata_data_types(df, meta_cols))
