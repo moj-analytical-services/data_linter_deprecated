@@ -32,12 +32,12 @@ class TestLinterMethods(unittest.TestCase):
         [
             (
                 "test_csv_data_invalid_enums",
-                "meta/test_table_metadata_enums.json",
+                "meta/test_meta_cols_enums.json",
                 "expected_results/test_result_invalid_enums.json",
             ),
             (
                 "test_csv_data_valid_enums",
-                "meta/test_table_metadata_enums.json",
+                "meta/test_meta_cols_enums.json",
                 "expected_results/test_result_valid_enums.json",
             ),
         ]
@@ -56,17 +56,17 @@ class TestLinterMethods(unittest.TestCase):
         [
             (
                 "test_csv_data_valid",
-                "meta/test_table_metadata_valid.json",
+                "meta/test_meta_cols_valid.json",
                 "expected_results/test_check_column_exists_and_order/data_valid.json",
             ),
             (
                 "test_csv_data_missing_col",
-                "meta/test_table_metadata_valid.json",
+                "meta/test_meta_cols_valid.json",
                 "expected_results/test_check_column_exists_and_order/missing_col.json",
             ),
             (
                 "test_csv_data_valid_wrong_order",
-                "meta/test_table_metadata_valid.json",
+                "meta/test_meta_cols_valid.json",
                 "expected_results/test_check_column_exists_and_order/wrong_order.json",
             ),
         ]
@@ -84,7 +84,7 @@ class TestLinterMethods(unittest.TestCase):
         [
             (
                 "test_csv_data_invalid_regex",
-                "meta/test_table_metadata_regex.json",
+                "meta/test_meta_cols_regex.json",
                 "expected_results/test_result_invalid_regex.json",
             )
         ]
