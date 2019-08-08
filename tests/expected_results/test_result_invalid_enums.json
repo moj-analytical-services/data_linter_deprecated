@@ -1,82 +1,34 @@
-[
-    {
-        "myint": {
-            "check_enums": {
-                "success": null,
-                "result": {}
+{
+    "success": false,
+    "result": {
+        "element_count": 3,
+        "missing_count": 0,
+        "missing_percent": 0.0,
+        "unexpected_count": 1,
+        "unexpected_percent": 0.3333333333333333,
+        "unexpected_percent_nonmissing": 0.3333333333333333,
+        "partial_unexpected_list": [
+            "d"
+        ],
+        "partial_unexpected_index_list": [
+            2
+        ],
+        "partial_unexpected_counts": [
+            {
+                "value": "d",
+                "count": 1
             }
-        },
-        "myfloat": {
-            "check_enums": {
-                "success": null,
-                "result": {}
-            }
-        },
-        "mychar": {
-            "check_enums": {
-                "success": false,
-                "result": {
-                    "element_count": 3,
-                    "missing_count": 0,
-                    "missing_percent": 0.0,
-                    "unexpected_count": 1,
-                    "unexpected_percent": 0.3333333333333333,
-                    "unexpected_percent_nonmissing": 0.3333333333333333,
-                    "partial_unexpected_list": [
-                        "d"
-                    ],
-                    "partial_unexpected_index_list": [
-                        2
-                    ],
-                    "partial_unexpected_counts": [
-                        {
-                            "value": "d",
-                            "count": 1
-                        }
-                    ],
-                    "unexpected_list": [
-                        "d"
-                    ],
-                    "unexpected_index_list": [
-                        2
-                    ]
-                },
-                "exception_info": {
-                    "raised_exception": false,
-                    "exception_message": null,
-                    "exception_traceback": null
-                }
-            }
-        },
-        "mydate": {
-            "check_enums": {
-                "success": null,
-                "result": {}
-            }
-        },
-        "mydatetime": {
-            "check_enums": {
-                "success": null,
-                "result": {}
-            }
-        },
-        "myboolean": {
-            "check_enums": {
-                "success": null,
-                "result": {}
-            }
-        },
-        "mydouble": {
-            "check_enums": {
-                "success": null,
-                "result": {}
-            }
-        },
-        "mylong": {
-            "check_enums": {
-                "success": null,
-                "result": {}
-            }
-        }
+        ],
+        "unexpected_list": [
+            "d"
+        ],
+        "unexpected_index_list": [
+            2
+        ]
+    },
+    "exception_info": {
+        "raised_exception": false,
+        "exception_message": null,
+        "exception_traceback": null
     }
-]
+}

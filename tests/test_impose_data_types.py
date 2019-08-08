@@ -4,17 +4,14 @@ import unittest
 import pandas as pd
 import json
 import os
+import sys
 
 from data_linter.impose_data_types import impose_metadata_types_on_pd_df, _pd_df_datatypes_match_metadata_data_types
 
+cwd = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.dirname(__file__))
 
-def read_json_from_path(path):
-    with open(path) as f:
-        return_json = json.load(f)
-    return return_json
-
-
-THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+from testutils import get_test_csv, get_test_jsonl, read_json
 
 class ConformanceTestOfValidData(unittest.TestCase):
     """
@@ -23,10 +20,9 @@ class ConformanceTestOfValidData(unittest.TestCase):
 
     def test_metadata_correctly_imposed_on_valid_data(self):
 
-        df = pd.read_csv(os.path.join(THIS_DIR, "data", "test_csv_data_valid.csv"), dtype="object", low_memory=True)
+        df = get_test_csv(cwd, "test_csv_data_valid")
 
-        meta_data = read_json_from_path(
-            os.path.join(THIS_DIR, "meta", "test_meta_cols_valid.json"))
+        meta_data = read_json(cwd, "meta/test_meta_cols_valid.json")
 
         meta_cols = meta_data["columns"]
 
@@ -42,10 +38,9 @@ class ConformanceTestOfValidData(unittest.TestCase):
     def test_metadata_correctly_imposed_on_alreadytyped_date(self):
 
         # What happens if we read in an already typed database
-        df = pd.read_parquet(os.path.join(THIS_DIR, "data", "test_parquet_data_valid.parquet"))
+        df = pd.read_parquet(os.path.join(cwd, "data", "test_parquet_data_valid.parquet"))
 
-        meta_data = read_json_from_path(
-            os.path.join(THIS_DIR, "meta", "test_meta_cols_valid.json"))
+        meta_data = read_json(cwd, "meta/test_meta_cols_valid.json")
 
         meta_cols = meta_data["columns"]
 
@@ -61,10 +56,9 @@ class ConformanceTestOfValidData(unittest.TestCase):
     def test_metadata_impose_does_not_work_on_invalid_data(self):
 
         # What happens if we read in data that does NOT conform to the metadata
-        df = pd.read_csv(os.path.join(THIS_DIR, "data", "test_csv_data_invalid_data.csv"), dtype = "object", low_memory = True)
+        df = get_test_csv(cwd, "test_csv_data_invalid_data")
 
-        meta_data = read_json_from_path(
-            os.path.join(THIS_DIR, "meta", "test_meta_cols_valid.json"))
+        meta_data = read_json(cwd, "meta/test_meta_cols_valid.json")
 
         meta_cols = meta_data["columns"]
 
@@ -81,10 +75,9 @@ class ConformanceTestOfValidData(unittest.TestCase):
 
         #What happens if we read ints and it expects strings?
 
-        df = pd.read_parquet(os.path.join(THIS_DIR, "data", "test_parquet_data_valid.parquet"))
+        df = pd.read_parquet(os.path.join(cwd, "data", "test_parquet_data_valid.parquet"))
 
-        meta_data = read_json_from_path(
-            os.path.join(THIS_DIR, "meta", "test_meta_cols_allstring.json"))
+        meta_data = read_json(cwd, "meta/test_meta_cols_allstring.json")
 
         meta_cols = meta_data["columns"]
 
