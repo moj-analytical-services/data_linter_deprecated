@@ -7,7 +7,8 @@
                 "column_exists": true,
                 "actual_pos": 0,
                 "order_match": true
-            }
+            },
+            "exception_info": null
         }
     },
     "myfloat": {
@@ -18,7 +19,8 @@
                 "column_exists": true,
                 "actual_pos": 1,
                 "order_match": true
-            }
+            },
+            "exception_info": null
         }
     },
     "mychar": {
@@ -29,7 +31,8 @@
                 "column_exists": false,
                 "actual_pos": null,
                 "order_match": false
-            }
+            },
+            "exception_info": null
         }
     },
     "mydate": {
@@ -40,7 +43,8 @@
                 "column_exists": true,
                 "actual_pos": 2,
                 "order_match": false
-            }
+            },
+            "exception_info": null
         }
     },
     "mydatetime": {
@@ -51,7 +55,8 @@
                 "column_exists": true,
                 "actual_pos": 3,
                 "order_match": false
-            }
+            },
+            "exception_info": null
         }
     },
     "myboolean": {
@@ -62,7 +67,8 @@
                 "column_exists": true,
                 "actual_pos": 4,
                 "order_match": false
-            }
+            },
+            "exception_info": null
         }
     },
     "mydouble": {
@@ -73,7 +79,8 @@
                 "column_exists": true,
                 "actual_pos": 5,
                 "order_match": false
-            }
+            },
+            "exception_info": null
         }
     },
     "mylong": {
@@ -84,7 +91,8 @@
                 "column_exists": true,
                 "actual_pos": 6,
                 "order_match": false
-            }
+            },
+            "exception_info": null
         }
     }
 }

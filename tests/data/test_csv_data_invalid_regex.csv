@@ -1,5 +1,5 @@
 
-myint,myfloat,mychar,mydate,mydatetime,myboolean,mydouble,mylong,mypattern
-1,1.0,a,2018-01-01,2018-01-01T00:00:00,true,1.2347823,23489727853534508,aaaa/000
-100,2,hello,2018-01-01,2018-01-01T10:00:00,true,1.2347823,234897234908,bbbb/001
-1,1.0,hello,2018-01-01,2018-01-01T00:00:00,false,1.2347823,234897234908,ccccd/02
+myint,mypattern
+1,abc
+1,efg
+1,Abc
