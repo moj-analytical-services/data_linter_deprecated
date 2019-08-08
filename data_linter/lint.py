@@ -146,10 +146,6 @@ class Linter:
                 catch_exceptions=True,
             )
 
-            # Set success property dependent on nullable from metadata
-            if nullable:
-                nulls_result["success"] = True
-
             col_logentries = self.vlog[col["name"]]
             col_logentries.create_logentry_from_ge_result(
                 test_name, nulls_result)

@@ -35,6 +35,19 @@ class ValidationLog:
         if colname not in self._vlog:
             self._vlog[colname] = ColumnLogEntries(colname)
 
+    # Serialisation/presentation functions
+    def as_dict(self):
+        return {k: v.as_dict() for k,v in self._vlog.items()}
+
+    def as_table_rows(self):
+        result = []
+        for k,v in self._vlog.items():
+            result.extend(v.as_table_rows())
+        return result
+
+    # def as_markdown():
+        # df.pipe(tabulate, header='keys', tablefmt='pipe')
+
 
 class LogEntry:
     """
@@ -80,6 +93,21 @@ class LogEntry:
         else:
             return "Failure"
 
+    # Serialisation/presentation functions
+
+    def as_dict(self):
+        return {"success": self.success,
+                "result": self.result,
+                "exception_info": self.exception_info}
+
+    def as_table_row(self):
+        return {
+            "col_name": self.col_name,
+            "validation_description": self.validation_description,
+            "success": self.success
+        }
+
+
     def __repr__(self):
         return f"data_linter.validation_log.LogEntry: This log entry checks {self.validation_description} for column {self.col_name}.  Current status: {self._status()}"
 
@@ -113,6 +141,13 @@ class ColumnLogEntries:
         else:
             le = self.entries[key]
         return le
+
+    # Serialisation/presentation functions
+    def as_dict(self):
+        return {k:v.as_dict() for k,v in self.entries.items()}
+
+    def as_table_rows(self):
+        return [v.as_table_row() for k, v in self.entries.items()]
 
     def __repr__(self):
         repr = ""
