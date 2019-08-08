@@ -3,3 +3,4 @@ pandas>=0.25
 parameterized>=0.7
 pyarrow>=0.14
 jsonschema>=3.0.0
+tabulate>=0.8.3
