@@ -165,3 +165,6 @@ class Linter:
         self.check_nulls()
         self.check_pattern()
         self.check_enums()
+
+    def _repr_markdown_(self):
+        return self.vlog.as_markdown()
