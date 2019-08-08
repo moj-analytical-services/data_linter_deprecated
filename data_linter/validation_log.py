@@ -6,7 +6,9 @@
 # - Output as markdown
 # - Overall success
 
-from collections import defaultdict
+import pandas as pd
+import numpy as np
+import tabulate
 
 class ValidationLog:
     """
@@ -45,8 +47,14 @@ class ValidationLog:
             result.extend(v.as_table_rows())
         return result
 
-    # def as_markdown():
-        # df.pipe(tabulate, header='keys', tablefmt='pipe')
+    def as_markdown(self):
+        df = pd.DataFrame(self.as_table_rows())
+        df = df.sort_values(["success", "col_name", "validation_description"])
+        df["success"] = np.where(df["success"], "✅", "❌")
+        return df.pipe(tabulate.tabulate, headers='keys', tablefmt='pipe')
+
+    def _repr_markdown_(self):
+            return self.as_markdown()
 
 
 class LogEntry:

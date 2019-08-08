@@ -84,7 +84,6 @@ class Linter:
         Test to if values in column are all in
         enums as specified in metadata
         """
-        print("Running enum test")
         test_name = "check_enums"
 
         for col in self.meta_cols:
@@ -108,7 +107,6 @@ class Linter:
         Test to if values in column all fit within
         regex pattern as specified in metadata
         """
-        print("Running pattern test")
         test_name = "check_pattern"
 
         for col in self.meta_cols:
