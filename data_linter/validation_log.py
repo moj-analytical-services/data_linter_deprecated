@@ -1,11 +1,18 @@
 # -*- coding: utf-8 -*-
 
+# TODO:
+# - Output as dict
+# - Output summary table
+# - Output as markdown
+# - Overall success
+
+from collections import defaultdict
 
 class ValidationLog:
     """
     Stores the log produced by the linter
 
-    Responsible for the presentation of the log
+    Along with LogEntry and LogEntries classes, Responsible for the presentation of the log
     - outputting summary markdown
     - outputting tabular summary
     - outputting verbose log
@@ -14,29 +21,28 @@ class ValidationLog:
 
     def __init__(self, linter):
 
-        self.log = {}
+        self._vlog = {}
 
-        # Create entries up front - user will want to know if a column has no entries as it would
-        # indicate an error
+        # It makes sense to create entries up front becayse user will want to know
+        # if a column has no entries as it would indicate something had gone wrong
         for c in linter.meta_cols:
             self._create_logentries_for_column(c["name"])
 
-    def _create_logentries_for_column(self, colname):
-        if colname not in self.log:
-            self.log[colname] = ColumnLogEntries(colname)
+    def __getitem__(self, col_name):
+        return self._vlog[col_name]
 
-    def get_log_entries_for_column(self, colname):
-        return self.log[colname]
+    def _create_logentries_for_column(self, colname):
+        if colname not in self._vlog:
+            self._vlog[colname] = ColumnLogEntries(colname)
 
 
 class LogEntry:
     """
-    A single log result i.e. the output of checks of a given validation function (as described
-    by check_desc) on a given column
+    A single log result i.e. the output of checks of a given validation_description on a given column
     """
 
     def __init__(self, col_name, validation_description):
-        self._success = None
+        self.success = None
         self._result = None
         self._exception_info = None
         self.col_name = col_name
@@ -47,10 +53,6 @@ class LogEntry:
         return self._result
 
     @property
-    def success(self):
-        return self._success
-
-    @property
     def exception_info(self):
         return self._exception_info
 
@@ -59,21 +61,21 @@ class LogEntry:
             self._result = {}
         self._result[key] = value
 
-    def set_success_status(self, success):
-        self._success = success
-
     def set_exception_info_key(self, key, value):
         if not self._exception_info:
             self._exception_info = {}
 
-        # TODO check key is one of raised_exception,exception_message,exception_traceback
+        allowed_keys = ["raised_exception", "exception_message", "exception_traceback"]
+        if key not in allowed_keys:
+            raise ValueError(f"Key must be one of {allowed_keys}")
+
         self._exception_info[key] = value
 
     def _status(self):
-        if self._success is None:
+        if self.success is None:
             return "Status not yet determined"
 
-        if self._success:
+        if self.success:
             return "Success"
         else:
             return "Failure"
@@ -93,15 +95,9 @@ class ColumnLogEntries:
         self.col_name = col_name
         self.entries = {}
 
-    def get_or_create_logentry(self, validation_description):
-        if validation_description not in self.entries:
-            self.entries[validation_description] = LogEntry(
-                self.col_name, validation_description)
-        return self.entries[validation_description]
-
     def create_logentry_from_ge_result(self, validation_description, ge_output):
-        le = self.get_or_create_logentry(validation_description)
-        le.set_success_status(ge_output["success"])
+        le = self[validation_description]
+        le.success = ge_output["success"]
 
         for key, value in ge_output["result"].items():
             le.set_result_key(key, value)
@@ -110,7 +106,13 @@ class ColumnLogEntries:
             for key, value in ge_output["exception_info"].items():
                 le.set_exception_info_key(key, value)
 
-
+    def __getitem__(self, key):
+        if key not in self.entries:
+            le = LogEntry(self.col_name, key)
+            self.entries[key] = le
+        else:
+            le = self.entries[key]
+        return le
 
     def __repr__(self):
         repr = ""

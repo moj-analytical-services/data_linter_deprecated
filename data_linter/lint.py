@@ -32,10 +32,6 @@ class Linter:
 
         self.vlog = ValidationLog(self)
 
-        self.log = {}
-        for c in self.meta_cols:
-            self.log[c["name"]] = {}
-
 
     def get_meta_col(self, col_name):
         if col_name not in self.meta_colnames:
@@ -64,9 +60,9 @@ class Linter:
         #  Test meta cols
         for pos, c in enumerate(self.meta_colnames):
 
-            col_logentries = self.vlog.get_log_entries_for_column(c)
+            col_logentries = self.vlog[c]
 
-            le = col_logentries.get_or_create_logentry(fn)
+            le = col_logentries[fn]
             le.set_result_key("expected_pos",  pos)
 
             if c in df_cols:
@@ -80,7 +76,7 @@ class Linter:
 
             is_successful = le.result["column_exists"] and le.result["order_match"]
 
-            le.set_success_status(is_successful)
+            le.success = is_successful
 
 
     def check_enums(self):
@@ -92,21 +88,18 @@ class Linter:
         test_name = "check_enums"
 
         for col in self.meta_cols:
-            try:
-                enum_list = col["enum"]
-            except KeyError:
-                self.log[col["name"]][test_name] = self._get_template_result()
+            if "enum" not in col:
                 continue
 
             enum_result = self.df_ge.expect_column_values_to_be_in_set(
                 col["name"],
-                enum_list,
+                col["enum"],
                 result_format="COMPLETE",
                 include_config=False,
                 catch_exceptions=True,
             )
 
-            col_logentries = self.vlog.get_log_entries_for_column(col["name"])
+            col_logentries = self.vlog[col["name"]]
             col_logentries.create_logentry_from_ge_result(
                 test_name, enum_result)
 
@@ -119,21 +112,20 @@ class Linter:
         test_name = "check_pattern"
 
         for col in self.meta_cols:
-            try:
-                pattern = col["pattern"]
-            except KeyError:
-                self.log[col["name"]][test_name] = self._get_template_result()
+            if "pattern" not in col:
                 continue
 
             pattern_result = self.df_ge.expect_column_values_to_match_regex(
                 col["name"],
-                pattern,
+                col["pattern"],
                 result_format="COMPLETE",
                 include_config=False,
                 catch_exceptions=True
             )
 
-            self.log[col["name"]][test_name] = pattern_result
+            col_logentries = self.vlog[col["name"]]
+            col_logentries.create_logentry_from_ge_result(
+                test_name, pattern_result)
 
 
     def check_nulls(self):
@@ -144,7 +136,8 @@ class Linter:
         test_name = "check_nulls"
 
         for col in self.meta_cols:
-            nullable = col.get("nullable", True)
+            if col.get("nullable", True):
+                continue
 
             nulls_result = self.df_ge.expect_column_values_to_not_be_null(
                 col["name"],
@@ -157,7 +150,9 @@ class Linter:
             if nullable:
                 nulls_result["success"] = True
 
-            self.log[col["name"]][test_name] = nulls_result
+            col_logentries = self.vlog[col["name"]]
+            col_logentries.create_logentry_from_ge_result(
+                test_name, nulls_result)
 
     def validate_meta_data(self):
         """
