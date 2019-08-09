@@ -35,18 +35,12 @@ class ValidationLog:
 
         success_array = [v.success() for k, v in self._vlog.items()]
 
-        if len(success_array) == 0:
-            raise Exception("Test success status undetermined: You must run linter.check_all() before calling linter.success()")
-
         if all(success_array):
             return True
 
         if False in success_array:
             return False
 
-        # If it's a mix of True and None return None
-        if None in success_array:
-            return None
 
     # Serialisation/presentation functions
     def as_dict(self):
@@ -172,15 +166,17 @@ class ColumnLogEntries:
 
         success_array = [v.success for k, v in self.entries.items()]
 
-        if all(success_array):
-            return True
+        if None in success_array:
+            raise Exception("Some tests have failed to return a result.  This indicates a bug.")
+
+        if len(success_array) == 0:
+            raise Exception(f"No tests have yet been run for {self.col_name}.  You probably need to run linter.check_all()")
 
         if False in success_array:
             return False
 
-        # If it's a mix of True and None return None
-        if None in success_array:
-            return None
+        if all(success_array):
+            return True
 
 
     def __repr__(self):

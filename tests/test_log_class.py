@@ -108,9 +108,15 @@ class TestLogMethods(unittest.TestCase):
         meta = read_json(cwd, m)
 
         l = Linter(df, meta)
+        # Should not return success before tests run
+        with self.assertRaises(Exception):
+            l.success()
+
         l.check_all()
         result = l.success()
         self.assertEqual(result, r)
+
+
 
 
 
