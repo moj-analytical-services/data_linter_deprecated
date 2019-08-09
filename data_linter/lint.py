@@ -42,6 +42,9 @@ class Linter:
     def meta_colnames(self):
         return [c["name"] for c in self.meta_cols]
 
+    def success(self):
+        return self.vlog.success()
+
     def _get_template_result(self):
         return {"success": None, "result": {}}
 
