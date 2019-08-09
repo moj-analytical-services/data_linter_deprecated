@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
 
-# TODO:
-# - Output as dict
-# - Output summary table
-# - Output as markdown
-# - Overall success
-
 import pandas as pd
 import numpy as np
 import tabulate
@@ -36,6 +30,23 @@ class ValidationLog:
     def _create_logentries_for_column(self, colname):
         if colname not in self._vlog:
             self._vlog[colname] = ColumnLogEntries(colname)
+
+    def success(self):
+
+        success_array = [v.success() for k, v in self._vlog.items()]
+
+        if len(success_array) == 0:
+            raise Exception("Test success status undetermined: You must run linter.check_all() before calling linter.success()")
+
+        if all(success_array):
+            return True
+
+        if False in success_array:
+            return False
+
+        # If it's a mix of True and None return None
+        if None in success_array:
+            return None
 
     # Serialisation/presentation functions
     def as_dict(self):
@@ -92,7 +103,7 @@ class LogEntry:
 
         self._exception_info[key] = value
 
-    def _status(self):
+    def _status_string(self):
         if self.success is None:
             return "Status not yet determined"
 
@@ -117,7 +128,7 @@ class LogEntry:
 
 
     def __repr__(self):
-        return f"data_linter.validation_log.LogEntry: This log entry checks {self.validation_description} for column {self.col_name}.  Current status: {self._status()}"
+        return f"data_linter.validation_log.LogEntry: This log entry checks {self.validation_description} for column {self.col_name}.  Current status: {self._status_string()}"
 
 
 class ColumnLogEntries:
@@ -156,6 +167,21 @@ class ColumnLogEntries:
 
     def as_table_rows(self):
         return [v.as_table_row() for k, v in self.entries.items()]
+
+    def success(self):
+
+        success_array = [v.success for k, v in self.entries.items()]
+
+        if all(success_array):
+            return True
+
+        if False in success_array:
+            return False
+
+        # If it's a mix of True and None return None
+        if None in success_array:
+            return None
+
 
     def __repr__(self):
         repr = ""

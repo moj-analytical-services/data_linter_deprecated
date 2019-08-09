@@ -89,3 +89,28 @@ class TestLogMethods(unittest.TestCase):
         result = l.vlog.as_dict()
         self.assertDictEqual(result, expected_result)
 
+    @parameterized.expand(
+        [
+            (
+                "test_csv_data_valid",
+                "meta/test_meta_cols_valid.json",
+                True
+            ),
+            (
+                "test_csv_data_missing_col",
+                "meta/test_meta_cols_valid.json",
+                False
+            ),
+        ]
+    )
+    def test_overall_success(self, d, m, r):
+        df = get_test_csv(cwd, d)
+        meta = read_json(cwd, m)
+
+        l = Linter(df, meta)
+        l.check_all()
+        result = l.success()
+        self.assertEqual(result, r)
+
+
+
