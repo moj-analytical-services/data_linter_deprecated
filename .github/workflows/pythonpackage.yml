@@ -1,4 +1,4 @@
-name: Python package
+name: Data Linter
 on: [push]
 jobs:
   build:
