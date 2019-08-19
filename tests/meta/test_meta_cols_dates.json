@@ -1,0 +1,21 @@
+{
+    "$schema": "../../data_linter/data/metadata_jsonschema.json",
+    "columns": [
+        {
+            "name": "date_only_as_datetime_midnight",
+            "type": "datetime"
+        },
+        {
+            "name": "datetime_non_parsable",
+            "type": "datetime"
+        },
+        {
+            "name": "date_only_as_date",
+            "type": "date"
+        },
+        {
+            "name": "date_only_as_datetime_with_times",
+            "type": "date"
+        }
+    ]
+}

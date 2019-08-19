@@ -52,25 +52,6 @@ def _pd_dtype_dict_from_metadata(meta_cols):
 
     return dtype
 
-
-def _list_of_date_columns_from_metadata(meta_cols):
-    """
-    Get list of columns to pass to the pandas.to_csv date_parse argument from table metadata
-    """
-
-    parse_dates = []
-
-    for c in meta_cols:
-        colname = c["name"]
-        coltype = c["type"]
-
-        if coltype in ["date", "datetime"]:
-            parse_dates.append(colname)
-
-    return parse_dates
-
-
-
 def _get_np_datatype_from_metadata(col_name, meta_cols):
     """
     Lookup the datatype from the metadata, and our conversion table
@@ -94,21 +75,11 @@ def _get_np_datatype_from_metadata(col_name, meta_cols):
         return None
 
 
-def _list_of_date_columns_from_metadata(meta_cols):
-    """
-    Get list of columns to pass to the pandas.to_csv date_parse argument from table metadata
-    """
-
-    parse_dates = []
-
-    for c in meta_cols:
-        colname = c["name"]
-        coltype = c["type"]
-
-        if coltype in ["date", "datetime"]:
-            parse_dates.append(colname)
-
-    return parse_dates
+def convert_int_column(series, errors):
+    # Running astype("Int64") on a series with character values always fails
+    series[pd.notnull(series)] = series[pd.notnull(series)].astype(int, errors=errors)
+    series = series.astype("Int64", errors=errors)
+    return series
 
 
 def impose_metadata_types_on_pd_df(df, meta_data, errors='ignore'):
@@ -125,34 +96,26 @@ def impose_metadata_types_on_pd_df(df, meta_data, errors='ignore'):
 
     meta_cols = meta_data["columns"]
 
-    df_cols_set = set(df.columns)
-    metadata_date_cols_set = set(
-        _list_of_date_columns_from_metadata(meta_cols))
-    metadata_cols_set = set([c["name"] for c in meta_cols])
+    for col in meta_cols:
+        coltype = col["type"]
+        colname = col["name"]
+        if colname not in df.columns:
+            # There's a column in the metadata that's not in the df
+            continue
+        expected_type = _get_np_datatype_from_metadata(colname, meta_cols)
+        actual_type = df[colname].dtype.type
 
-    # Cols that may need conversion minus the date cols
-    nondate_columns = df_cols_set.intersection(
-        metadata_cols_set) - metadata_date_cols_set
-
-    date_columns = df_cols_set.intersection(metadata_date_cols_set)
-
-    for col in nondate_columns:
-        expected_type = _get_np_datatype_from_metadata(col, meta_cols)
-        actual_type = df[col].dtype.type
-
-        if expected_type != actual_type:
-            df[col] = df[col].astype(expected_type, errors=errors)
-
-        if expected_type == np.typeDict["object"]:
-            df[col] = df[col].astype(str)
-
-    for col in date_columns:
-        expected_type = np.typeDict["Datetime64"]
-        actual_type = df[col].dtype.type
-
-        if expected_type != actual_type:
+        if coltype not in ["date", "datetime", "int", "Int64", "character"]:
+            if expected_type != actual_type:
+                df[colname] = df[colname].astype(expected_type, errors=errors)
+        elif coltype == "character":
+            if expected_type != actual_type:
+                df[colname] = df[colname].astype(str, errors=errors)
+        elif coltype == "int":
+            df[colname] = convert_int_column(df[colname], errors=errors)
+        elif coltype in ["date", "datetime"]:
             # TODO:  The metadata should probably support a datatime format (e.g. '%d/%m/%Y') string, which
             # we attempt to apply here
-            df[col] = pd.to_datetime(df[col], errors=errors)
+            df[colname] = pd.to_datetime(df[colname], errors=errors)
 
     return df

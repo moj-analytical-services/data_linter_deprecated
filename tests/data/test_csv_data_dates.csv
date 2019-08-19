@@ -1,0 +1,4 @@
+date_only_as_datetime_midnight,datetime_non_parsable,date_only_as_date,date_only_as_datetime_with_times
+2018-01-01T00:00:00,2018-01-01T000:00:00,2018-01-01,2018-01-01T10:00:00
+2019-01-01T00:00:00,2018-99-01T00:00:00,2018-01-01,2018-01-01T20:00:00
+

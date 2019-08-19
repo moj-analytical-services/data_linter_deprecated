@@ -102,6 +102,14 @@ class TestLogMethods(unittest.TestCase):
                 "meta/test_meta_cols_utf8_strings.json",
                 True
             ),
+            (   "test_csv_data_ints",
+                "meta/test_meta_cols_ints.json",
+                False
+            ),
+            (  "test_csv_data_dates",
+                "meta/test_meta_cols_dates.json",
+                False
+             )
         ]
     )
     def test_data_types(self, d, m, r):
@@ -114,6 +122,24 @@ class TestLogMethods(unittest.TestCase):
         result = l.success()
         self.assertEqual(result, r)
 
+    def test_data_types_ints(self):
+
+        df = get_test_csv(cwd, "test_csv_data_ints")
+        meta = read_json(cwd, "meta/test_meta_cols_ints.json")
+
+        l = Linter(df, meta)
+
+        l.check_types()
+
+        actual = {k: v["check_data_type"]["success"]
+            for k, v in l.vlog.as_dict().items()}
+
+        expected = {'int_with_float': False,
+                    'int_with_long': False,
+                    'int_with_null': True,
+                    'int_without_null': True}
+
+        self.assertDictEqual(actual, expected)
 
 
     @parameterized.expand(
