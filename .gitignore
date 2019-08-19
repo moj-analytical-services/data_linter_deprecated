@@ -1,3 +1,11 @@
+.vscode/settings.json
+
+# don't want to commit jupyter notebooks
+*.ipynb
+
+# don't want to commit robins scratchpad for testing things
+del.py
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
