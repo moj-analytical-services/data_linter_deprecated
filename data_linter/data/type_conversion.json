@@ -5,9 +5,9 @@
         "comment": "see https:\/\/stackoverflow.com\/questions\/34881079\/pandas-distinction-between-str-and-object-types"
     },
     "int": {
-        "pd_datatype": "int",
-        "ge_datatype": "int",
-        "comment": "pandas doesn't allow nulls in int columns so imposing this type will sometimes be problematic.  pandas 0.24.0 supports nullable ints but this feature is experimental"
+        "pd_datatype": "Int64",
+        "ge_datatype": "Int64",
+        "comment": "https://pandas.pydata.org/pandas-docs/stable/user_guide/integer_na.html"
     },
     "float": {
         "pd_datatype": "float",

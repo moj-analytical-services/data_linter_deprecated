@@ -1,0 +1,4 @@
+int_without_null,int_with_null,int_with_long,int_with_float
+1,1,1,1
+2,,2340982340928340928340982309823094820389423,2.1
+3,3,3,3
