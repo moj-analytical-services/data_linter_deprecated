@@ -1,0 +1,16 @@
+{
+    "columns": [
+        {
+            "name": "ascii_strings",
+            "type": "character"
+        },
+        {
+            "name": "naughty_strings",
+            "type": "character"
+        },
+        {
+            "name": "utf8_strings",
+            "type": "character"
+        }
+    ]
+}
