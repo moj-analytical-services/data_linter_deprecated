@@ -97,6 +97,11 @@ class TestLogMethods(unittest.TestCase):
                 "meta/test_meta_cols_valid.json",
                 True
             ),
+            (
+                "test_csv_utf8_strings",
+                "meta/test_meta_cols_utf8_strings.json",
+                True
+            ),
         ]
     )
     def test_data_types(self, d, m, r):
