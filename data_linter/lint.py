@@ -97,6 +97,8 @@ class Linter:
         for col in self.meta_cols:
             if "enum" not in col:
                 continue
+            if col["name"] not in self.df_ge.columns:
+                continue
 
             enum_result = self.df_ge.expect_column_values_to_be_in_set(
                 col["name"],
@@ -120,6 +122,8 @@ class Linter:
         for col in self.meta_cols:
             if "pattern" not in col:
                 continue
+            if col["name"] not in self.df_ge.columns:
+                continue
 
             pattern_result = self.df_ge.expect_column_values_to_match_regex(
                 col["name"],
@@ -141,6 +145,8 @@ class Linter:
 
         for col in self.meta_cols:
             if col.get("nullable", True):
+                continue
+            if col["name"] not in self.df_ge.columns:
                 continue
 
             nulls_result = self.df_ge.expect_column_values_to_not_be_null(
@@ -164,6 +170,8 @@ class Linter:
         type_conversion_dict = get_type_conversion_dict()
 
         for col in self.meta_cols:
+            if col["name"] not in self.df_ge.columns:
+                continue
 
             pandas_type = type_conversion_dict[col["type"]]["ge_datatype"]
 
@@ -195,6 +203,7 @@ class Linter:
         self.check_nulls()
         self.check_pattern()
         self.check_enums()
+        self.check_types()
 
     def _repr_markdown_(self):
         return self.vlog.as_markdown()
