@@ -4,9 +4,14 @@ import jsonschema
 import numpy as np
 import pandas as pd
 import pkg_resources
-from data_linter.impose_data_types import impose_metadata_types_on_pd_df
+from data_linter.impose_data_types import impose_metadata_types_on_pd_df, get_type_conversion_dict
 from data_linter.validation_log import ValidationLog
 
+GE_ARGS = {
+    "result_format":"COMPLETE",
+    "include_config": False,
+    "catch_exceptions": True
+}
 
 class Linter:
     def __init__(self, df, meta_data):
@@ -119,9 +124,7 @@ class Linter:
             pattern_result = self.df_ge.expect_column_values_to_match_regex(
                 col["name"],
                 col["pattern"],
-                result_format="COMPLETE",
-                include_config=False,
-                catch_exceptions=True
+                **GE_ARGS
             )
 
             col_logentries = self.vlog[col["name"]]
@@ -150,6 +153,30 @@ class Linter:
             col_logentries = self.vlog[col["name"]]
             col_logentries.create_logentry_from_ge_result(
                 test_name, nulls_result)
+
+    def check_types(self):
+        # The implementation of `expect_column_values_to_be_of_type` accepts pandas types so we can just use our data/type_conversion.json types
+        # https://github.com/great-expectations/great_expectations/blob/2764099df5edcec98dc3a9260cf927d152d67f63/great_expectations/dataset/pandas_dataset.py#L524
+        # see also https://github.com/great-expectations/great_expectations/issues/110
+
+        test_name = "check_data_type"
+
+        type_conversion_dict = get_type_conversion_dict()
+
+        for col in self.meta_cols:
+
+            pandas_type = type_conversion_dict[col["type"]]["ge_datatype"]
+
+            type_result = self.df_ge.expect_column_values_to_be_of_type(
+                col["name"],
+                pandas_type,
+                **GE_ARGS
+            )
+
+            col_logentries = self.vlog[col["name"]]
+            col_logentries.create_logentry_from_ge_result(
+                test_name, type_result)
+
 
     def validate_meta_data(self):
         """

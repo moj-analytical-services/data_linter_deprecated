@@ -29,6 +29,10 @@ def _pd_df_datatypes_match_metadata_data_types(df, meta_cols):
 
     return actual_numpy_types == expected_dtypes
 
+def get_type_conversion_dict():
+    with pkg_resources.resource_stream(__name__, "data/type_conversion.json") as io:
+        type_conversion_dict = json.load(io)
+    return type_conversion_dict
 
 def _pd_dtype_dict_from_metadata(meta_cols):
     """
@@ -36,8 +40,7 @@ def _pd_dtype_dict_from_metadata(meta_cols):
     passed to the dtype argument of pd.read_csv
     """
 
-    with pkg_resources.resource_stream(__name__, "data/type_conversion.json") as io:
-        type_conversion_dict = json.load(io)
+    type_conversion_dict = get_type_conversion_dict()
 
     dtype = {}
 

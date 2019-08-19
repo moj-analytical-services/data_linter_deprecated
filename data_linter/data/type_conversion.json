@@ -1,34 +1,42 @@
 {
     "character": {
         "pd_datatype": "object",
+        "ge_datatype": "str",
         "comment": "see https:\/\/stackoverflow.com\/questions\/34881079\/pandas-distinction-between-str-and-object-types"
     },
     "int": {
         "pd_datatype": "int",
+        "ge_datatype": "int",
         "comment": "pandas doesn't allow nulls in int columns so imposing this type will sometimes be problematic.  pandas 0.24.0 supports nullable ints but this feature is experimental"
     },
     "float": {
         "pd_datatype": "float",
+        "ge_datatype": "float",
         "comment": null
     },
     "boolean": {
         "pd_datatype": "bool",
+        "ge_datatype": "bool",
         "comment": null
     },
     "datetime": {
         "pd_datatype": "datetime64",
+        "ge_datatype": "datetime64",
         "comment": "you have to specify parse_dates in pandas"
     },
     "date": {
         "pd_datatype": "datetime64",
+        "ge_datatype": "datetime64",
         "comment": "pandas doesn't really have a datetime type it expects datetimes use parse_dates which returns a datetime"
     },
     "double": {
         "pd_datatype": "float",
+        "ge_datatype": "float",
         "comment": null
     },
     "long": {
         "pd_datatype": "int",
+        "ge_datatype": "int",
         "comment": "pandas doesn't allow nulls in int columns so imposing this type will sometimes be problematic.  pandas 0.24.0 supports nullable ints but this feature is experimental"
     }
 }
