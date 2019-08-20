@@ -4,6 +4,8 @@ import sys
 import json
 import pandas as pd
 from jsonschema.exceptions import ValidationError
+import jsonschema
+import pkg_resources
 
 from parameterized import parameterized
 
@@ -26,3 +28,8 @@ class TestGenerateMetadata(unittest.TestCase):
         result = generate_from_pd_df(df)
 
         self.assertDictEqual(result, expected_result)
+
+        with pkg_resources.resource_stream("data_linter", "data/metadata_jsonschema.json") as io:
+            schema = json.load(io)
+
+        jsonschema.validate(result, schema)
