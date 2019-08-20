@@ -21,8 +21,6 @@ homepage = "https://github.com/moj-analytical-services/data_linter"
 python = "^3.6"
 great-expectations = "0.7.*"
 pandas = "0.25.*"
-
-[tool.poetry.dev-dependencies]
 parameterized = "0.7.*"
 
 [build-system]
