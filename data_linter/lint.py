@@ -206,4 +206,4 @@ class Linter:
         self.check_types()
 
     def _repr_markdown_(self):
-        return self.vlog.as_markdown()
+        return self.vlog.as_detailed_markdown()

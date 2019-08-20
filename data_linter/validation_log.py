@@ -18,6 +18,8 @@ class ValidationLog:
     def __init__(self, linter):
 
         self._vlog = {}
+        self.df_ge = linter.df_ge
+        self.linter = linter
 
         # It makes sense to create entries up front becayse user will want to know
         # if a column has no entries as it would indicate something had gone wrong
@@ -29,7 +31,7 @@ class ValidationLog:
 
     def _create_logentries_for_column(self, colname):
         if colname not in self._vlog:
-            self._vlog[colname] = ColumnLogEntries(colname)
+            self._vlog[colname] = ColumnLogEntries(colname, self.linter)
 
     def success(self):
 
@@ -52,14 +54,22 @@ class ValidationLog:
             result.extend(v.as_table_rows())
         return result
 
-    def as_markdown(self):
+    def as_summary_markdown(self):
         df = pd.DataFrame(self.as_table_rows())
         df = df.sort_values(["success", "col_name", "validation_description"])
         df["success"] = np.where(df["success"], "✅", "❌")
         return df.pipe(tabulate.tabulate, headers='keys', tablefmt='pipe')
 
+    def as_detailed_markdown(self):
+        ## TODO:  Add here's a few sample rows of data:
+        result = []
+        for k, v in self._vlog.items():
+            result.extend(v.as_markdown())
+        return "".join(result)
+
+
     def _repr_markdown_(self):
-            return self.as_markdown()
+            return self.as_summary_markdown()
 
 
 class LogEntry:
@@ -67,12 +77,13 @@ class LogEntry:
     A single log result i.e. the output of checks of a given validation_description on a given column
     """
 
-    def __init__(self, col_name, validation_description):
+    def __init__(self, col_name, validation_description, linter):
         self.success = None
         self._result = None
         self._exception_info = None
         self.col_name = col_name
         self.validation_description = validation_description
+        self.df_ge = linter.df_ge
 
     @property
     def result(self):
@@ -106,6 +117,27 @@ class LogEntry:
         else:
             return "Failure"
 
+    def _status_emoji(self):
+        if self.success is None:
+            return "🤷"
+
+        if self.success:
+            return "✅"
+        else:
+            return "❌"
+
+
+    def get_rows(self, n):
+        return self.df_ge.head(n).to_dict(orient='records')
+
+    def get_failure_rows(self, n=5):
+        if "unexpected_index_list" in self.result:
+            indices =  self.result["unexpected_index_list"][:n]
+            return self.df_ge.loc[indices, :].to_dict(orient='records')
+        else:
+             return []
+
+
     # Serialisation/presentation functions
 
     def as_dict(self):
@@ -120,6 +152,16 @@ class LogEntry:
             "success": self.success
         }
 
+    def as_markdown(self):
+        md = f"{self._status_emoji()} The *{self.validation_description}* check was a {self._status_string().lower()}."
+        failure_rows = self.get_failure_rows(2)
+        if len(failure_rows) > 0:
+            md = md + "Here's a sample of some rows which failed:\n\n" + tabulate.tabulate(failure_rows, headers="keys", tablefmt="pipe")
+            unexpected_values = ", ".join(self.result["unexpected_list"][2:10])
+            if unexpected_values:
+                md = md + f"\n\n Some more values in the column which failed were {unexpected_values}"
+        return md
+
 
     def __repr__(self):
         return f"data_linter.validation_log.LogEntry: This log entry checks {self.validation_description} for column {self.col_name}.  Current status: {self._status_string()}"
@@ -132,8 +174,9 @@ class ColumnLogEntries:
     ColumnLogEntries knowns column name
     """
 
-    def __init__(self, col_name):
+    def __init__(self, col_name, linter):
         self.col_name = col_name
+        self.linter = linter
         self.entries = {}
 
     def create_logentry_from_ge_result(self, validation_description, ge_output):
@@ -149,7 +192,7 @@ class ColumnLogEntries:
 
     def __getitem__(self, key):
         if key not in self.entries:
-            le = LogEntry(self.col_name, key)
+            le = LogEntry(self.col_name, key, self.linter)
             self.entries[key] = le
         else:
             le = self.entries[key]
@@ -177,6 +220,19 @@ class ColumnLogEntries:
 
         if all(success_array):
             return True
+
+    def as_markdown(self):
+
+        mds = [v.as_markdown() for k, v in self.entries.items()]
+        individual_results = "\n\n".join(mds)
+
+        return f"""
+---
+
+### Results for column {self.col_name}
+
+{individual_results}
+"""
 
 
     def __repr__(self):
