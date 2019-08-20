@@ -20,7 +20,10 @@ homepage = "https://github.com/moj-analytical-services/data_linter"
 [tool.poetry.dependencies]
 python = "^3.6"
 great-expectations = "0.7.*"
-pandas = "0.25.*"
+pandas = ">=0.25"
+tabulate = ">=0.8.3"
+pyarrow = ">=0.14"
+jsonschema = ">=3.0.0"
 
 [tool.poetry.dev-dependencies]
 parameterized = "0.7.*"
