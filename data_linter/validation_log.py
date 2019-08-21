@@ -56,7 +56,7 @@ class ValidationLog:
         df = pd.DataFrame(self.as_table_rows())
         df = df.sort_values(["success", "col_name", "validation_description"])
         df["success"] = np.where(df["success"], "✅", "❌")
-        return df.pipe(tabulate.tabulate, headers='keys', tablefmt='pipe')
+        return df.pipe(tabulate.tabulate, headers='keys', tablefmt='pipe', showindex='false')
 
     def _repr_markdown_(self):
             return self.as_markdown()
