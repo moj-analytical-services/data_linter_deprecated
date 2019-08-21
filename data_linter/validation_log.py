@@ -66,10 +66,20 @@ class ValidationLog:
         return df.pipe(tabulate, headers='keys', tablefmt='pipe')
 
     def as_detailed_markdown(self):
-        ## TODO:  Add here's a few sample rows of data:
+
+        sample = tabulate(
+            self.linter.df_ge.head(2), headers="keys", showindex=False, tablefmt='pipe')
+
+        metadf = pd.DataFrame({c["name"]:[c["type"],]for c in self.linter.meta_data["columns"]})
+        metadfmd = tabulate(metadf, headers="keys",
+                            showindex=False, tablefmt='pipe')
+
         mds = [v.as_markdown() for v in self._vlog.values()]
         jinja_data = {
-            "logentries_md_list": mds
+            "logentries_md_list": mds,
+            "tabular_data_sample": sample,
+            "meta_df": metadfmd,
+            "success": self.success()
         }
         template = jinja_env.get_template('validationlog_detailed.j2')
         return template.render(jinja_data)

@@ -1,14 +1,25 @@
-## Validation report {if dataset name} for data blah {endif}
+# Validation report {if dataset name} for data blah {endif}
 
-*Overall
+## Summary
+{%if success %}
+👍😎😎😎😎😎👍
+✅**All tests on your dataset passed**
+👍😎😎😎😎😎👍
+{% else %}
+🔥🔥🔥🔥🔥🔥🔥
+❌**Some tests failed, see below for details**
+🔥🔥🔥🔥🔥🔥🔥
+{% endif %}
+
+## Your data
 
 Here's a sample of your data:
 
 {{tabular_data_sample}}
 
-The metadata expected the following columns:
+and your metadata:
 
-{{table_from_metadata_names,type}}
+{{meta_df}}
 
 {% for md in logentries_md_list %}
 {{md}}
