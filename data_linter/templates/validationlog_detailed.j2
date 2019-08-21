@@ -1,3 +1,15 @@
+## Validation report {if dataset name} for data blah {endif}
+
+*Overall
+
+Here's a sample of your data:
+
+{{tabular_data_sample}}
+
+The metadata expected the following columns:
+
+{{table_from_metadata_names,type}}
+
 {% for md in logentries_md_list %}
 {{md}}
 {% endfor %}

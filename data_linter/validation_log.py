@@ -3,6 +3,7 @@
 import pandas as pd
 import numpy as np
 from tabulate import tabulate
+import json
 
 from jinja2 import Environment, PackageLoader
 jinja_env = Environment(loader=PackageLoader(
@@ -90,6 +91,8 @@ class ColumnLogEntries:
         self.linter = linter
         self.entries = {}
 
+        self.meta_lookup = {v["name"]: v for v in linter.meta_data["columns"]}
+
     def create_logentry_from_ge_result(self, validation_description, ge_output):
         le = self[validation_description]
         le.success = ge_output["success"]
@@ -139,7 +142,8 @@ class ColumnLogEntries:
         mds = [v.as_markdown() for v in self.entries.values()]
         jinja_data = {
             "logentry_md_list":mds,
-            "col_name": self.col_name
+            "col_name": self.col_name,
+            "metadata": json.dumps(self.meta_lookup[self.col_name])
         }
         template = jinja_env.get_template('logentries_detailed.j2')
         return template.render(jinja_data)
@@ -243,7 +247,8 @@ class LogEntry:
             "status_emoji": self._status_emoji(),
             "status_string": self._status_string().lower(),
             "table_exists": False,
-            "unexpected_list_exists": False
+            "unexpected_list_exists": False,
+            "success": self.success
         }
 
         if self.validation_description not in ["check_data_type", "check_column_exists_and_order"]:
@@ -281,6 +286,10 @@ class LogEntry:
             template = jinja_env.get_template('logentry_detailed_column_exists_and_order.j2')
             return template.render(jinja_data)
 
+        if self.validation_description == "check_data_type":
+            template = jinja_env.get_template(
+                'logentry_detailed_data_type.j2')
+            return template.render(jinja_data)
 
         template = jinja_env.get_template('logentry_detailed.j2')
         return template.render(jinja_data)
