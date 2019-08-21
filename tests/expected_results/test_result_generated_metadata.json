@@ -1,0 +1,44 @@
+{
+    "columns": [
+        {
+            "name": "myint",
+            "description": "",
+            "type": "int"
+        },
+        {
+            "name": "myfloat",
+            "description": "",
+            "type": "float"
+        },
+        {
+            "name": "mychar",
+            "description": "",
+            "type": "character"
+        },
+        {
+            "name": "mydate",
+            "description": "",
+            "type": "datetime"
+        },
+        {
+            "name": "mydatetime",
+            "description": "",
+            "type": "datetime"
+        },
+        {
+            "name": "myboolean",
+            "description": "",
+            "type": "boolean"
+        },
+        {
+            "name": "mydouble",
+            "description": "",
+            "type": "float"
+        },
+        {
+            "name": "mylong",
+            "description": "",
+            "type": "long"
+        }
+    ]
+}
