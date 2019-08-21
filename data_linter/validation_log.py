@@ -2,10 +2,11 @@
 
 import pandas as pd
 import numpy as np
-import tabulate
+from tabulate import tabulate
 
 from jinja2 import Environment, PackageLoader
-jinja_env = Environment(loader=PackageLoader('data_linter', 'templates'))
+jinja_env = Environment(loader=PackageLoader(
+    'data_linter', 'templates'), trim_blocks=True, lstrip_blocks=True)
 
 class ValidationLog:
     """
@@ -61,19 +62,16 @@ class ValidationLog:
         df = pd.DataFrame(self.as_table_rows())
         df = df.sort_values(["success", "col_name", "validation_description"])
         df["success"] = np.where(df["success"], "✅", "❌")
-        return df.pipe(tabulate.tabulate, headers='keys', tablefmt='pipe')
+        return df.pipe(tabulate, headers='keys', tablefmt='pipe')
 
     def as_detailed_markdown(self):
         ## TODO:  Add here's a few sample rows of data:
-
-        md = """
-
-        """
-
-        ind_results = [v.as_markdown() for v in self._vlog.values()]
-
-
-        return "".join(ind_results)
+        mds = [v.as_markdown() for v in self._vlog.values()]
+        jinja_data = {
+            "logentries_md_list": mds
+        }
+        template = jinja_env.get_template('validationlog_detailed.j2')
+        return template.render(jinja_data)
 
 
     def _repr_markdown_(self):
@@ -139,16 +137,14 @@ class ColumnLogEntries:
     def as_markdown(self):
 
         mds = [v.as_markdown() for v in self.entries.values()]
+        jinja_data = {
+            "logentry_md_list":mds,
+            "col_name": self.col_name
+        }
         template = jinja_env.get_template('logentries_detailed.j2')
         return template.render(jinja_data)
 
-        return f"""
----
 
-### Results for column {self.col_name}
-
-{individual_results}
-"""
 
     def __repr__(self):
         repr = ""
@@ -240,26 +236,56 @@ class LogEntry:
             "success": self.success
         }
 
-    def as_markdown(self, table_rows = 2, unexpected_values = 8):
-
-        unexpected_list = self.result["unexpected_list"][table_rows:table_rows+unexpected_values]
-        unexpected_index = self.result["unexpected_index_list"][table_rows:table_rows+unexpected_values]
-
-        unexpected_data = [{"index": v[0], "value":v[1].__repr__()} for v in zip(unexpected_index, unexpected_list)]
+    def as_markdown(self, num_table_rows = 2, num_unexpected_values = 8):
 
         jinja_data = {
             "validation_description": self.validation_description,
             "status_emoji": self._status_emoji(),
-            "status_string": self._status_string(),
-            "table_exists": len(self.result["unexpected_list"]) > 0,
-            "table": tabulate.tabulate(self.get_failure_rows(table_rows), headers="keys", tablefmt="pipe", showindex=False),
-            "unexpected_list_exists": len(self.result["unexpected_list"]) > table_rows,
-            "unexpected_data": unexpected_data
-
+            "status_string": self._status_string().lower(),
+            "table_exists": False,
+            "unexpected_list_exists": False
         }
+
+        if self.validation_description not in ["check_data_type", "check_column_exists_and_order"]:
+            num_errors = len(self.result["unexpected_list"])
+
+            if num_errors > 0:
+                jinja_data["table_exists"] = True
+                df = self.get_failure_rows(num_table_rows)
+                jinja_data["table"] = tabulate(df, headers="keys", tablefmt="pipe", showindex=False)
+
+            if num_errors > num_table_rows:
+                jinja_data["unexpected_list_exists"] = True
+
+                start = num_table_rows
+                end = num_table_rows + num_unexpected_values
+                unexpected_list = self.result["unexpected_list"][start:end]
+                unexpected_list = [v.__repr__() for v in unexpected_list] #want e.g. 'a' to be rendered a such, not a
+                unexpected_index = self.result["unexpected_index_list"][start:end]
+                tuples = zip(unexpected_index, unexpected_list)
+                unexpected_data = [{"index": v[0], "value":v[1]} for v in tuples]
+
+                jinja_data["unexpected_data"] = unexpected_data
+
+
+            template = jinja_env.get_template('logentry_detailed.j2')
+            return template.render(jinja_data)
+
+        if self.validation_description == "check_column_exists_and_order":
+
+            jinja_data["exists"] = self.result["column_exists"]
+            jinja_data["actual_pos"] = self.result["actual_pos"] + 1 # Zero indexed in data
+            jinja_data["expected_pos"] = self.result["expected_pos"] + 1 # Zero indexed in data
+
+
+            template = jinja_env.get_template('logentry_detailed_column_exists_and_order.j2')
+            return template.render(jinja_data)
+
 
         template = jinja_env.get_template('logentry_detailed.j2')
         return template.render(jinja_data)
+
+
 
 
 
