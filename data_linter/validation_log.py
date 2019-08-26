@@ -67,8 +67,16 @@ class ValidationLog:
 
     def as_detailed_markdown(self):
 
-        sample = tabulate(
-            self.linter.df_ge.head(2), headers="keys", showindex=False, tablefmt='pipe')
+        tdata = self.linter.df_ge.head(2).copy()
+
+        # This is only needed beca
+        try:
+            tdata = tdata.fillna("")
+        except TypeError:
+            # the above line fails on an Int64 (nullable) column see https://github.com/pandas-dev/pandas/issues/25288
+            tdata = tdata.fillna(np.nan)
+
+        sample = tabulate(tdata, headers="keys", showindex=False, tablefmt='pipe')
 
         metadf = pd.DataFrame({c["name"]:[c["type"],]for c in self.linter.meta_data["columns"]})
         metadfmd = tabulate(metadf, headers="keys",
@@ -289,7 +297,12 @@ class LogEntry:
         if self.validation_description == "check_column_exists_and_order":
 
             jinja_data["exists"] = self.result["column_exists"]
-            jinja_data["actual_pos"] = self.result["actual_pos"] + 1 # Zero indexed in data
+            jinja_data["incorrect_order"] = not self.result["order_match"]
+
+            if self.result["actual_pos"] is not None:
+                jinja_data["actual_pos"] = self.result["actual_pos"] + 1 # Zero indexed in data
+            else:
+                jinja_data["actual_pos"] = "No position - col does not exist"
             jinja_data["expected_pos"] = self.result["expected_pos"] + 1 # Zero indexed in data
 
 

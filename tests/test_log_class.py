@@ -170,6 +170,38 @@ class TestLogMethods(unittest.TestCase):
         self.assertEqual(result, r)
 
 
+    @parameterized.expand(
+        [
+            ("test_csv_data_additional_col", "meta/test_meta_cols_valid.json"),
+            ("test_csv_data_dates", "meta/test_meta_cols_dates.json"),
+            ("test_csv_data_ints", "meta/test_meta_cols_ints.json"),
+            ("test_csv_data_invalid_data", "meta/test_meta_cols_valid.json"),
+            ("test_csv_data_invalid_enums", "meta/test_meta_cols_enums.json"),
+            ("test_csv_data_invalid_regex", "meta/test_meta_cols_regex.json"),
+            ("test_csv_data_missing_col", "meta/test_meta_cols_valid.json"),
+            ("test_csv_data_mixedtype_col", "meta/test_meta_cols_valid.json"),
+            ("test_csv_data_valid", "meta/test_meta_cols_valid.json"),
+            ("test_csv_data_valid_enums", "meta/test_meta_cols_enums.json"),
+            ("test_csv_data_valid_wrong_order", "meta/test_meta_cols_valid.json"),
+            ("test_csv_utf8_strings", "meta/test_meta_cols_valid.json")
+        ]
+    )
+    def test_detailed_markdown(self, d, m):
+        """
+        This tests that a wide range of metadata/data combinations render correctly without erroring
+        """
+
+        df = get_test_csv(cwd, d)
+        meta = read_json(cwd, m)
+
+        l = Linter(df, meta)
+
+        l.check_all()
+
+        l.markdown_report()
+
+
+
 
 
 
