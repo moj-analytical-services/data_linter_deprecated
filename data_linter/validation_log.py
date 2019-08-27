@@ -64,7 +64,7 @@ class ValidationLog:
         df = df.sort_values(["success", "col_name", "validation_description"])
         df["success"] = np.where(df["success"], "✅", "❌")
 
-        return df.pipe(tabulate, headers='keys', tablefmt='pipe')
+        return df.pipe(tabulate, headers='keys', tablefmt='pipe', showindex=False)
 
     def as_detailed_markdown(self):
 
