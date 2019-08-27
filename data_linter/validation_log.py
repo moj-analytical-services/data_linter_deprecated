@@ -88,7 +88,8 @@ class ValidationLog:
             "logentries_md_list": mds,
             "tabular_data_sample": sample,
             "meta_df": metadfmd,
-            "success": self.success()
+            "success": self.success(),
+            "dataset_name": self.linter.meta_data.get("name", None)
         }
         template = jinja_env.get_template('validationlog_detailed.j2')
         return template.render(jinja_data)
