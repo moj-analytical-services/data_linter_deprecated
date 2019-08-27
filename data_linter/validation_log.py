@@ -63,6 +63,7 @@ class ValidationLog:
         df = pd.DataFrame(self.as_table_rows())
         df = df.sort_values(["success", "col_name", "validation_description"])
         df["success"] = np.where(df["success"], "✅", "❌")
+
         return df.pipe(tabulate, headers='keys', tablefmt='pipe')
 
     def as_detailed_markdown(self):
@@ -91,7 +92,6 @@ class ValidationLog:
         }
         template = jinja_env.get_template('validationlog_detailed.j2')
         return template.render(jinja_data)
-
 
     def _repr_markdown_(self):
             return self.as_summary_markdown()
