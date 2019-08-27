@@ -1,0 +1,6 @@
+**{{status_emoji}} {{validation_description}} was a {{status_string}}**
+
+{%if not success %}
+At least one of the values in the column failed to convert from string to the intended type.
+Note:  We currently do not have a good way of detecting which values failed. See [here](https://github.com/great-expectations/great_expectations/issues/110)
+{% endif %}

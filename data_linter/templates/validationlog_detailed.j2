@@ -1,0 +1,26 @@
+# Validation report {%if dataset_name %}for the table {{dataset_name}}{% endif %}
+
+## Summary
+{%if success %}
+👍😎😎😎😎😎👍
+✅**All tests on your dataset passed**
+👍😎😎😎😎😎👍
+{% else %}
+🔥🔥🔥🔥🔥🔥🔥
+❌**Some tests failed, see below for details**
+🔥🔥🔥🔥🔥🔥🔥
+{% endif %}
+
+## Your data
+
+Here's a sample of your data:
+
+{{tabular_data_sample}}
+
+and a summary of your metadata:
+
+{{meta_df}}
+
+{% for md in logentries_md_list %}
+{{md}}
+{% endfor %}

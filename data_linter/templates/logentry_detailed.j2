@@ -1,0 +1,11 @@
+**{{status_emoji}} {{validation_description}} was a {{status_string}}**
+{% if table_exists %}
+Here's a sample of some rows which failed:
+
+{{table}}
+{% if unexpected_list_exists%}
+Examples of other values which failed were: {% for  d in unexpected_data%}
+{% if loop.last %} and {%endif%} `{{d.value}}` (row {{d.index}}){% if not loop.last %}, {%endif%}
+{% endfor %}.
+{% endif %}
+{% endif %}

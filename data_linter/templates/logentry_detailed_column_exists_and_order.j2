@@ -1,0 +1,10 @@
+**{{status_emoji}} {{validation_description}} was a {{status_string}}**
+
+
+{% if exists %}
+{% if incorrect_order %}
+Column exists but is in position {{actual_pos}} rather than the expected position {{expected_pos}}.
+{% endif %}
+{% else %}
+Column does not exist in input data.
+{% endif %}
