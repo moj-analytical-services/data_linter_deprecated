@@ -1,6 +1,6 @@
 # data_linter
 
-A python package that validates datasets against a metadata schema which is defined [here](https://github.com/moj-analytical-services/data_linter/blob/master/data_linter/data/metadata_jsonschema.json).
+A python package that validates datasets against a metadata schema which is defined [here](https://github.com/moj-analytical-services/data_linter/blob/master/data_linter/data/metadata_jsonschema.json).   Try it out with our [interactive demo](https://mybinder.org/v2/gh/moj-analytical-services/data_linter_demo/master?filepath=index.ipynb).
 
 It performs the following checks:
 - Are the columns of the correct data types (or can they be converted without error using `pd.Series.astype` in the case of untyped data formats like `csv`)
@@ -13,6 +13,10 @@ It performs the following checks:
 - Where `nullable` is set to false in the metadata, are there really no nulls in the data?
 
 The package also provides functionality to `impose_metadata_types_on_pd_df`, which allows the user to safely convert a pandas dataframe to the datatypes specified in the metadata.  This is useful in the case you have an untyped data file such as a `csv` and want to ensure it is conformant with the metadata.
+
+## Installation
+
+`pip install data_linter`
 
 ## Usage
 
