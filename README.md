@@ -1,5 +1,7 @@
 # data_linter
 
+[![Actions Status](https://github.com/moj-analytical-services/data_linter/workflows/Data%20Linter/badge.svg)](https://github.com/moj-analytical-services/data_linter/actions)
+
 A python package that validates datasets against a metadata schema which is defined [here](https://github.com/moj-analytical-services/data_linter/blob/master/data_linter/data/metadata_jsonschema.json).   Try it out with our [interactive demo](https://mybinder.org/v2/gh/moj-analytical-services/data_linter_demo/master?filepath=index.ipynb).
 
 It performs the following checks:
