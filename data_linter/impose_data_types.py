@@ -82,6 +82,45 @@ def convert_int_column(series, errors):
     return series
 
 
+def impose_metadata_column_order_on_pd_df(df, table_metadata, create_cols_if_not_exist=False, delete_superfluous_columns=True):
+    """
+    Return a dataframe where the column order conforms to the metadata
+    Note: This does not check the types match the metadata
+    """
+
+    md_cols = [c["name"] for c in table_metadata["columns"]]
+    actual_cols = df.columns
+
+    md_cols_set = set(md_cols)
+    actual_cols_set = set(actual_cols)
+
+    if len(md_cols) != len(md_cols_set):
+        raise ValueError("You have a duplicated column names in your metadata")
+
+    if len(actual_cols) != len(actual_cols_set):
+        raise ValueError("You have a duplicated column names in your data")
+
+    # Delete superflous columns if option set
+    superfluous_cols = actual_cols_set - md_cols_set
+
+    if len(superfluous_cols) > 0 and not delete_superfluous_columns:
+        raise ValueError(f"You chose delete_superfluous_cols = False, but the following superfluous columns were found: {superfluous_cols}")
+    else:
+        for c in superfluous_cols:
+            del df[c]
+
+    # Create columns if not in data and option is set
+    missing_cols = md_cols_set - actual_cols_set
+
+    if len(missing_cols) > 0 and not create_cols_if_not_exist:
+        raise ValueError(f"You create_cols_if_not_exist = False, but the following columns are missing from your data {missing_cols}")
+    else:
+        for c in missing_cols:
+            np_type = _get_np_datatype_from_metadata(c, table_metadata)
+            df[c] = pd.Series(dtype=np_type)
+
+    return df[md_cols]
+
 def impose_metadata_types_on_pd_df(df, meta_data, errors='ignore'):
     """
     Try to impose correct data type on all columns in metadata.
